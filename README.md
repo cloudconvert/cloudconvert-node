@@ -128,7 +128,7 @@ Events
 The ``Process``object emits the following Events:
 
 Event|Description
---|--
+------|------------
 ``error``| The conversion failed. You should always listen for this event: If there is no listener, the error will be thrown and might crash your application.
 ``finished``| The conversion is finished (but **not** yet downloaded). This event will only be emitted, if you do ``wait()`` for the process. (``convert()`` does this automatically for you).
 ``uploadeded``|The input file was uploaded.
