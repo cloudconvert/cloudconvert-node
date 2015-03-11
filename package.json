@@ -1,0 +1,26 @@
+{
+  "name": "cloudconvert",
+  "version": "1.0.0",
+  "description": "Official Node.js wrapper for the CloudConvert API",
+  "homepage": "https://github.com/cloudconvert/cloudconvert-node",
+  "author": "Josias Montag <josias@montag.info>",
+  "main": "./lib/api.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloudconvert/cloudconvert-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "request": "^2.53.0"
+  },
+  "devDependencies": {
+    "jshint": "latest",
+    "nodeunit": "latest"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/jshint lib tests && node node_modules/.bin/nodeunit tests"
+  }
+}
