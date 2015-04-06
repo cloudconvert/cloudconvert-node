@@ -1,6 +1,6 @@
 {
   "name": "cloudconvert",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Official Node.js wrapper for the CloudConvert API",
   "homepage": "https://github.com/cloudconvert/cloudconvert-node",
   "author": "Josias Montag <josias@montag.info>",
