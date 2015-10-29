@@ -5,6 +5,9 @@ This is a lightweight wrapper for the [CloudConvert](https://cloudconvert.com) A
 Feel free to use, improve or modify this wrapper! If you have questions contact us or open an issue on GitHub.
 
 
+[![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-node.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-node)
+
+
 Installation
 -------------------
 As usual:

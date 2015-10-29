@@ -247,14 +247,14 @@ module.exports = {
         }).on('finished', function(data) {
             this.downloadAll(__dirname);
         }).on('downloadedAll', function(path) {
+            test.ok(fs.statSync(path + "/input-0.jpg").size > 0);
             test.ok(fs.statSync(path + "/input-1.jpg").size > 0);
-            test.ok(fs.statSync(path + "/input-2.jpg").size > 0);
             test.done();
 
             // cleanup
             this.delete();
+            fs.unlinkSync(path + "/input-0.jpg");
             fs.unlinkSync(path + "/input-1.jpg");
-            fs.unlinkSync(path + "/input-2.jpg");
         }));
 
 
