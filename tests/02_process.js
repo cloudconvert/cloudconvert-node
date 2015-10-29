@@ -96,7 +96,7 @@ module.exports = {
                     quality : 75,
                 },
                 input: 'download',
-                file: 'http://notexisting'
+                file: 'http://notexisting/nonexisting.png'
             }, function (err, process) {
 
                 process.wait();
