@@ -31,10 +31,9 @@ fs.createReadStream('tests/input.png').pipe(cloudconvert.convert({
     console.error('Failed: ' + err);
 }).on('finished', function(data) {
     console.log('Done: ' + data.message);
-    this.pipe(fs.createWriteStream('out.jpg'));
 }).on('downloaded', function(destination) {
     console.log('Downloaded to: ' + destination.path);
-}));
+})).pipe(fs.createWriteStream('out.jpg'));
 ```
 You can use the [CloudConvert API Console](https://cloudconvert.com/apiconsole) to generate ready-to-use JS code snippets using this wrapper.
 
