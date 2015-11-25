@@ -83,7 +83,7 @@ module.exports = {
 
     },
 
-    'test if process emits "error" if conversion failes ': function (test) {
+    'test if process emits "error" if conversion fails': function (test) {
         "use strict";
 
         var api = new cloudconvert(process.env.API_KEY);
@@ -231,6 +231,27 @@ module.exports = {
 
 
     },
+
+    'test if piping of process before it has finished works': function (test) {
+        "use strict";
+
+        var api = new cloudconvert(process.env.API_KEY);
+
+        fs.createReadStream(__dirname  + '/input.png').pipe(api.convert({
+            inputformat: 'png',
+            outputformat: 'jpg',
+        }).on('downloaded', function(destination) {
+            test.ok(fs.statSync(destination.path).size > 0);
+            test.done();
+
+            // cleanup
+            this.delete();
+            fs.unlinkSync(destination.path);
+        })).pipe(fs.createWriteStream(__dirname  + '/out.jpg'));
+
+
+    },
+
 
 
     'test if download of multiple output files works': function (test) {
