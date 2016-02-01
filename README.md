@@ -21,19 +21,18 @@ Quickstart
 var fs = require('fs');
 var cloudconvert = new (require('cloudconvert'))('your_api_key');
 
-fs.createReadStream('tests/input.png').pipe(cloudconvert.convert({
+fs.createReadStream('tests/input.png')
+.pipe(cloudconvert.convert({
     inputformat: 'png',
     outputformat: 'jpg',
     converteroptions: {
         quality : 75,
     }
-}).on('error', function(err) {
-    console.error('Failed: ' + err);
-}).on('finished', function(data) {
-    console.log('Done: ' + data.message);
-}).on('downloaded', function(destination) {
-    console.log('Downloaded to: ' + destination.path);
-})).pipe(fs.createWriteStream('out.jpg'));
+ }))
+.pipe(fs.createWriteStream('out.jpg')
+.on('finish', function() {
+    console.log('Done!');
+});
 ```
 You can use the [CloudConvert API Console](https://cloudconvert.com/apiconsole) to generate ready-to-use JS code snippets using this wrapper.
 
@@ -44,6 +43,7 @@ The manual way
 ``cloudconvert.convert()`` creates a Process, start it and waits until it completes. In some cases it might be necessary that you do this steps seperately, as the following example shows:
 
 ```js
+
 var fs = require('fs');
 var cloudconvert = new (require('cloudconvert'))('your_api_key');
 
@@ -58,33 +58,40 @@ cloudconvert.createProcess({inputformat: 'png', outputformat: 'pdf'}, function(e
         process.start({
             outputformat: 'jpg',
             converteroptions: {
-               quality : 75,
+                quality : 75,
             },
-            input: 'upload',
-            file: fs.createReadStream('tests/input.png')
+            input: 'upload'
         }, function (err, process) {
 
             if (err) {
                 console.error('CloudConvert Process start failed: ' + err);
             } else {
 
-                // wait until the process is finished (or completed with an error)
-                process.wait(function (err, process) {
-                    if (err) {
-                        console.error('CloudConvert Process failed: ' + err);
-                    } else {
-                        console.log('Done: ' + process.data.message);
+                // upload the input file. see https://cloudconvert.com/apidoc#upload
+                process.upload(fs.createReadStream('tests/input.png'), null, function (err, process) {
 
-                        // download it
-                        process.download(fs.createWriteStream("out.jpg"), null, function(err, process) {
+                    if (err) {
+                        console.error('CloudConvert Process upload failed: ' + err);
+                    } else {
+                        // wait until the process is finished (or completed with an error)
+                        process.wait(function (err, process) {
                             if (err) {
-                                console.error('CloudConvert Process download failed: ' + err);
+                                console.error('CloudConvert Process failed: ' + err);
                             } else {
-                                console.log('Downloaded to out.jpg');
+                                console.log('Done: ' + process.data.message);
+
+                                // download it
+                                process.download(fs.createWriteStream("out.jpg"), null, function (err, process) {
+                                    if (err) {
+                                        console.error('CloudConvert Process download failed: ' + err);
+                                    } else {
+                                        console.log('Downloaded to out.jpg');
+                                    }
+                                });
                             }
+
                         });
                     }
-
                 });
 
 
@@ -135,6 +142,7 @@ Event|Description
 ``finished``| The conversion is finished (but **not** yet downloaded). This event will only be emitted, if you do ``wait()`` for the process. (``convert()`` does this automatically for you).
 ``progress``|Emitted every second with the current progress of the conversion. This event will only be emitted, if you do ``wait()`` for the process. 
 ``uploadeded``|The input file was uploaded.
+``started``|The process was started.
 ``downloaded``|The output file was downloaded.
 ``downloadedAll``|Emitted after  completed ``downloadAll()``. Every single file will emit a seperate ``downloaded`` event.
 

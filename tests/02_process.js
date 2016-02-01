@@ -1,5 +1,5 @@
 var cloudconvert = require('../');
-var fs = require('fs');
+var fs = require('fs'), stream = require('stream');
 
 if (!process.env.API_KEY) {
     console.warn('The tests requires the API_KEY environment variable.');
@@ -268,18 +268,43 @@ module.exports = {
         }).on('finished', function(data) {
             this.downloadAll(__dirname);
         }).on('downloadedAll', function(path) {
-            test.ok(fs.statSync(path + "/input-0.jpg").size > 0);
             test.ok(fs.statSync(path + "/input-1.jpg").size > 0);
+            test.ok(fs.statSync(path + "/input-2.jpg").size > 0);
             test.done();
 
             // cleanup
             this.delete();
-            fs.unlinkSync(path + "/input-0.jpg");
             fs.unlinkSync(path + "/input-1.jpg");
+            fs.unlinkSync(path + "/input-2.jpg");
         }));
 
 
-    }
+    },
+
+    'test if piping a non file stream works': function (test) {
+        "use strict";
+
+        var api = new cloudconvert(process.env.API_KEY);
+
+        var stringStream = new stream.Readable();
+        stringStream.push('<html><head></head><body><h1>test</h1></body></html>');
+        stringStream.push(null);
+
+
+        stringStream.pipe(api.convert({
+            inputformat: 'html',
+            outputformat: 'pdf',
+        }).on('downloaded', function(destination) {
+            test.ok(fs.statSync(destination.path).size > 0);
+            test.done();
+
+            // cleanup
+            this.delete();
+            fs.unlinkSync(destination.path);
+        })).pipe(fs.createWriteStream(__dirname  + '/out.pdf'));
+
+
+    },
 
 
 

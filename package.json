@@ -1,6 +1,6 @@
 {
   "name": "cloudconvert",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Official Node.js wrapper for the CloudConvert API",
   "homepage": "https://github.com/cloudconvert/cloudconvert-node",
   "author": "Josias Montag <josias@montag.info>",
@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "async": "^0.9.0",
-    "request": "^2.53.0"
+    "pause-stream": "0.0.11",
+    "request": "^2.67.0"
   },
   "devDependencies": {
     "jshint": "latest",
