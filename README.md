@@ -29,7 +29,7 @@ fs.createReadStream('tests/input.png')
         quality : 75,
     }
  }))
-.pipe(fs.createWriteStream('out.jpg')
+.pipe(fs.createWriteStream('out.jpg'))
 .on('finish', function() {
     console.log('Done!');
 });
