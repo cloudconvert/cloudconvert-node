@@ -6,7 +6,8 @@ Feel free to use, improve or modify this wrapper! If you have questions contact 
 
 
 [![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-node.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-node)
-
+[![npm](https://img.shields.io/npm/v/cloudconvert.svg)](https://www.npmjs.com/package/cloudconvert)
+[![npm](https://img.shields.io/npm/dt/cloudconvert.svg)](https://www.npmjs.com/package/cloudconvert)
 
 Installation
 -------------------
@@ -186,19 +187,30 @@ fs.createReadStream('tests/input.pdf').pipe(cloudconvert.convert({
 How to run tests?
 -----------------
 
-Tests are based on nodeunit: 
+Tests are based on mocha: 
+
+    git https://github.com/cloudconvert/cloudconvert-node.git
+    cd cloudconvert-node
+    npm install -d
+    npm test
+
+
+
+How to run integration tests?
+-----------------
+
+By default, mocha does not run integration tests against the real CloudConvert API. To run integration tests, use the `API_KEY` enviroment variable and run the integration tests:
 
     git https://github.com/cloudconvert/cloudconvert-node.git
     cd cloudconvert-node
     npm install -d
     export API_KEY="your_api_key"
-    npm test
-
-
+    npm run integration
+    
 
 Resources
 ---------
 
-* [API Documentation](https://cloudconvert.com/apidoc)
+* [API Documentation](https://cloudconvert.com/api)
 * [Conversion Types](https://cloudconvert.com/formats)
 * [CloudConvert Blog](https://cloudconvert.com/blog)
