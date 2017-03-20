@@ -14,9 +14,9 @@
     "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
   },
   "dependencies": {
-    "async": "^0.9.0",
+    "async": "^2.1.5",
     "pause-stream": "0.0.11",
-    "request": "^2.67.0"
+    "request": "^2.81.0"
   },
   "devDependencies": {
     "jshint": "*",
