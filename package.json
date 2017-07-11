@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "jshint": "*",
-    "chai": "*",
+    "chai": "3.*",
     "chai-as-promised": "*",
     "mocha": "*",
     "nock": "*",
