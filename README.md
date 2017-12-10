@@ -49,40 +49,40 @@ var fs = require('fs');
 var cloudconvert = new (require('cloudconvert'))('your_api_key');
 
 // create the process. see https://cloudconvert.com/apidoc#create
-cloudconvert.createProcess({inputformat: 'png', outputformat: 'pdf'}, function(err, process) {
+cloudconvert.createProcess({inputformat: 'png', outputformat: 'pdf'}, function(err, conversionProcess) {
 
     if(err) {
         console.error('CloudConvert Process creation failed: ' + err);
     } else {
 
         // start the process. see https://cloudconvert.com/apidoc#create
-        process.start({
+        conversionProcess.start({
             outputformat: 'jpg',
             converteroptions: {
                 quality : 75,
             },
             input: 'upload'
-        }, function (err, process) {
+        }, function (err, conversionProcess) {
 
             if (err) {
                 console.error('CloudConvert Process start failed: ' + err);
             } else {
 
                 // upload the input file. see https://cloudconvert.com/apidoc#upload
-                process.upload(fs.createReadStream('tests/input.png'), null, function (err, process) {
+                conversionProcess.upload(fs.createReadStream('tests/input.png'), null, function (err, conversionProcess) {
 
                     if (err) {
                         console.error('CloudConvert Process upload failed: ' + err);
                     } else {
                         // wait until the process is finished (or completed with an error)
-                        process.wait(function (err, process) {
+                        conversionProcess.wait(function (err, conversionProcess) {
                             if (err) {
                                 console.error('CloudConvert Process failed: ' + err);
                             } else {
-                                console.log('Done: ' + process.data.message);
+                                console.log('Done: ' + conversionProcess.data.message);
 
                                 // download it
-                                process.download(fs.createWriteStream("out.jpg"), null, function (err, process) {
+                                conversionProcess.download(fs.createWriteStream("out.jpg"), null, function (err, conversionProcess) {
                                     if (err) {
                                         console.error('CloudConvert Process download failed: ' + err);
                                     } else {
@@ -142,7 +142,7 @@ Event|Description
 ``error``| The conversion failed. You should always listen for this event: If there is no listener, the error will be thrown and might crash your application.
 ``finished``| The conversion is finished (but **not** yet downloaded). This event will only be emitted, if you do ``wait()`` for the process. (``convert()`` does this automatically for you).
 ``progress``|Emitted every second with the current progress of the conversion. This event will only be emitted, if you do ``wait()`` for the process. 
-``uploadeded``|The input file was uploaded.
+``uploaded``|The input file was uploaded.
 ``started``|The process was started.
 ``downloaded``|The output file was downloaded.
 ``downloadedAll``|Emitted after  completed ``downloadAll()``. Every single file will emit a seperate ``downloaded`` event.
