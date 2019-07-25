@@ -1,11 +1,11 @@
 {
   "name": "cloudconvert",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "license": "MIT",
-  "description": "Official Node.js wrapper for the CloudConvert API",
+  "description": "Official Node.js SDK for the CloudConvert API",
   "homepage": "https://github.com/cloudconvert/cloudconvert-node",
   "author": "Josias Montag <josias@montag.info>",
-  "main": "./lib/api.js",
+  "main": "./lib/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/cloudconvert/cloudconvert-node.git"
@@ -14,21 +14,18 @@
     "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
   },
   "dependencies": {
-    "async": "^2.1.5",
-    "pause-stream": "0.0.11",
-    "request": "^2.81.0"
+    "axios": "^0.19.0",
+    "esm": "^3.2.25",
+    "form-data": "^2.5.0",
+    "socket.io-client": "^2.2.0"
   },
   "devDependencies": {
-    "jshint": "*",
-    "chai": "3.*",
-    "chai-as-promised": "*",
-    "mocha": "*",
-    "nock": "*",
-    "supertest": "*",
-    "supertest-as-promised": "*"
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "nock": "^10.0.6"
   },
   "scripts": {
-    "test": "node_modules/.bin/jshint lib tests && node node_modules/.bin/mocha tests/unit",
-    "integration": "node_modules/.bin/jshint lib tests && node node_modules/.bin/mocha tests/integration"
+    "test": "node node_modules/.bin/mocha --require esm tests/unit",
+    "test-integration": "node node_modules/.bin/mocha --require esm tests/integration"
   }
 }
