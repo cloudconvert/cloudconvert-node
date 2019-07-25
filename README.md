@@ -1,8 +1,8 @@
 cloudconvert-node
 =======================
-This is a lightweight wrapper for the [CloudConvert](https://cloudconvert.com) API.
 
-Feel free to use, improve or modify this wrapper! If you have questions contact us or open an issue on GitHub.
+> This is the official node.js SDK v1 or the [CloudConvert](https://cloudconvert.com/api/v1) _API v1_. 
+> For API v2, please use [v2 branch](https://github.com/cloudconvert/cloudconvert-node/tree/v2) (Beta) of this repository.
 
 
 [![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-node.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-node)
@@ -11,7 +11,6 @@ Feel free to use, improve or modify this wrapper! If you have questions contact 
 
 Installation
 -------------------
-As usual:
 
     npm install --save cloudconvert
     
