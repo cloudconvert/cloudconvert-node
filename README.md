@@ -11,8 +11,19 @@
 ## Installation
 
 
-    npm install --save cloudconvert
+    npm install --save cloudconvert/cloudconvert-node#v2
     
+Load as ESM module:
+
+```js
+import CloudConvert from 'cloudconvert';
+```
+
+... or via require:
+```js
+const CloudConvert = require('cloudconvert');
+```
+
 
 ## Creating Jobs
 
