@@ -90,11 +90,11 @@ const response = await cloudConvert.axios(file.url, {
     responseType: 'stream'
 });
 
-response.data.pipe(writer);
+response.data.pipe(writeStream);
 
 await new Promise((resolve, reject) => {
-    writer.on('finish', resolve);
-    writer.on('error', reject);
+    writeStream.on('finish', resolve);
+    writeStream.on('error', reject);
 });
 ```
 
@@ -111,6 +111,10 @@ const job = await cloudConvert.jobs.create({ ... });
 cloudConvert.jobs.subscribeEvent(job.id, 'finished', event => {
     // Job has finished
     console.log(event.job);
+    
+    // Job events do not contain the tasks
+    // To get all tasks of the job:
+    // const job = cloudConvert.jobs.get(event.job.id);
 });
 
 // Events for all tasks of the job
@@ -119,6 +123,11 @@ cloudConvert.jobs.subscribeTaskEvent(job.id, 'finished', event => {
     // Task has finished
     console.log(event.task);
 });
+```
+
+When you don't want to receive any events any more you should close the socket:
+```js
+cloudConvert.socket.close();
 ```
 
 ## Webhook Signing
