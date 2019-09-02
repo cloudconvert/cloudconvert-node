@@ -6,6 +6,7 @@
   "homepage": "https://github.com/cloudconvert/cloudconvert-node",
   "author": "Josias Montag <josias@montag.info>",
   "main": "./lib/index.js",
+  "module": "./lib/CloudConvert.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/cloudconvert/cloudconvert-node.git"
