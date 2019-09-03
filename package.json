@@ -26,7 +26,7 @@
     "nock": "^10.0.6"
   },
   "files": [
-    "lib/",
+    "lib/"
   ],
   "scripts": {
     "test": "node node_modules/.bin/mocha --require esm tests/unit",
