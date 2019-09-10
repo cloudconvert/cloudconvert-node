@@ -111,10 +111,6 @@ const job = await cloudConvert.jobs.create({ ... });
 cloudConvert.jobs.subscribeEvent(job.id, 'finished', event => {
     // Job has finished
     console.log(event.job);
-    
-    // Job events do not contain the tasks
-    // To get all tasks of the job:
-    // const job = cloudConvert.jobs.get(event.job.id);
 });
 
 // Events for all tasks of the job
