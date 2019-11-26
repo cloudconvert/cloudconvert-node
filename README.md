@@ -32,7 +32,7 @@ import CloudConvert from 'cloudconvert';
 
 const cloudConvert = new CloudConvert('api_key');
 
-const job = await cloudConvert.jobs.create({
+let job = await cloudConvert.jobs.create({
     'tasks': {
         'import-my-file': {
             'operation': 'import/url',
@@ -53,6 +53,29 @@ const job = await cloudConvert.jobs.create({
 ```
 You can use the [CloudConvert Job Builder](https://cloudconvert.com/api/v2/jobs/builder) to see the available options for the various task types.
 
+## Downloading Files
+
+CloudConvert can generate public URLs for using `export/url` tasks. You can use these URLs to download output files.
+
+```js
+job = await cloudConvert.jobs.wait(job.id); // Wait for job completion
+
+const exportTask = job.tasks.filter(task => task.operation === 'export/url')[0];
+const file = exportTask.result.files[0];
+
+const writeStream = fs.createWriteStream('./my-output.ext');
+
+const response = await axios(file.url, {
+    responseType: 'stream'
+});
+
+response.data.pipe(writeStream);
+
+await new Promise((resolve, reject) => {
+    writeStream.on('finish', resolve);
+    writeStream.on('error', reject);
+});
+```
 
 ## Uploading Files
 
@@ -75,28 +98,6 @@ const inputFile = fs.createReadStream('./file.pdf');
 await cloudConvert.tasks.upload(uploadTask, inputFile);
 ```
 
-
-## Downloading Files
-
-CloudConvert can generate public URLs for using `export/url` tasks. You can use these URLs to download output files.
-
-```js
-const exportTask = job.tasks.filter(task => task.operation === 'export/url')[0];
-const file = exportTask.result.files[0];
-
-const writeStream = fs.createWriteStream('./my-output.ext');
-
-const response = await cloudConvert.axios(file.url, {
-    responseType: 'stream'
-});
-
-response.data.pipe(writeStream);
-
-await new Promise((resolve, reject) => {
-    writeStream.on('finish', resolve);
-    writeStream.on('error', reject);
-});
-```
 
 ## Websocket Events
 

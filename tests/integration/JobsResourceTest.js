@@ -3,6 +3,7 @@ import {assert} from "chai";
 import * as fs from 'fs';
 import * as os from 'os';
 import apiKey from './ApiKey';
+import axios from "axios";
 
 
 describe('JobsResouce', () => {
@@ -41,14 +42,9 @@ describe('JobsResouce', () => {
 
             await this.cloudConvert.tasks.upload(uploadTask, stream);
 
-            // wait for job finished
-            while (job.status !== 'finished' && job.status !== 'error') {
-                await new Promise(done => setTimeout(done, 1000));
-                job = await this.cloudConvert.jobs.get(job.id);
-            }
+            job = await this.cloudConvert.jobs.wait(job.id);
 
             assert.equal(job.status, 'finished');
-
 
             // download export file
 
@@ -59,7 +55,7 @@ describe('JobsResouce', () => {
 
             const writer = fs.createWriteStream(this.tmpPath);
 
-            const response = await this.cloudConvert.axios(file.url, {
+            const response = await axios(file.url, {
                 responseType: 'stream'
             });
 

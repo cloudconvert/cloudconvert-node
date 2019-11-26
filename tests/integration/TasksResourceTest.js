@@ -24,11 +24,7 @@ describe('TasksResouce', () => {
 
             await this.cloudConvert.tasks.upload(task, stream);
 
-            // wait for task finished
-            while(task.status !== 'finished' && task.status !== 'error') {
-                await new Promise(done => setTimeout(done, 1000));
-                task = await this.cloudConvert.tasks.get(task.id);
-            }
+            task = await this.cloudConvert.tasks.wait(task.id);
 
             assert.equal(task.status, 'finished');
             assert.equal(task.result.files[0].filename, 'input.png');
