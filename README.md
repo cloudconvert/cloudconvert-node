@@ -60,16 +60,14 @@ CloudConvert can generate public URLs for using `export/url` tasks. You can use 
 ```js
 job = await cloudConvert.jobs.wait(job.id); // Wait for job completion
 
-const exportTask = job.tasks.filter(task => task.operation === 'export/url')[0];
+const exportTask = job.tasks.filter(task => task.operation === 'export/url' && task.status === 'finished')[0];
 const file = exportTask.result.files[0];
 
 const writeStream = fs.createWriteStream('./my-output.ext');
 
-const response = await axios(file.url, {
-    responseType: 'stream'
+http.get(file.url, function(response) {
+  response.pipe(writeStream);
 });
-
-response.data.pipe(writeStream);
 
 await new Promise((resolve, reject) => {
     writeStream.on('finish', resolve);
