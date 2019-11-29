@@ -63,7 +63,7 @@ job = await cloudConvert.jobs.wait(job.id); // Wait for job completion
 const exportTask = job.tasks.filter(task => task.operation === 'export/url' && task.status === 'finished')[0];
 const file = exportTask.result.files[0];
 
-const writeStream = fs.createWriteStream('./my-output.ext');
+const writeStream = fs.createWriteStream('./out/' + file.filename);
 
 http.get(file.url, function(response) {
   response.pipe(writeStream);
