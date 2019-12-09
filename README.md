@@ -11,7 +11,7 @@
 ## Installation
 
 
-    npm install --save cloudconvert/cloudconvert-node
+    npm install --save cloudconvert
     
 Load as ESM module:
 
