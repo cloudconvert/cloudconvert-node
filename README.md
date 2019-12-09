@@ -1,215 +1,162 @@
-cloudconvert-node
-=======================
+# cloudconvert-node
 
-> This is the official node.js SDK v1 or the [CloudConvert](https://cloudconvert.com/api/v1) _API v1_. 
-> For API v2, please use [v2 branch](https://github.com/cloudconvert/cloudconvert-node/tree/v2) (Beta) of this repository.
 
+> This is the official Node.js SDK v2 (Beta) for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_. 
+> For API v1, please use [v1 branch](https://github.com/cloudconvert/cloudconvert-node/tree/v1) of this repository.
 
 [![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-node.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-node)
 [![npm](https://img.shields.io/npm/v/cloudconvert.svg)](https://www.npmjs.com/package/cloudconvert)
 [![npm](https://img.shields.io/npm/dt/cloudconvert.svg)](https://www.npmjs.com/package/cloudconvert)
 
-Installation
--------------------
+## Installation
 
-    npm install --save cloudconvert
+
+    npm install --save cloudconvert/cloudconvert-node#v2
     
+Load as ESM module:
 
-Quickstart
--------------------
 ```js
-var fs = require('fs');
-var cloudconvert = new (require('cloudconvert'))('your_api_key');
+import CloudConvert from 'cloudconvert';
+```
 
-fs.createReadStream('tests/input.png')
-.pipe(cloudconvert.convert({
-    inputformat: 'png',
-    outputformat: 'jpg',
-    converteroptions: {
-        quality : 75,
+... or via require:
+```js
+const CloudConvert = require('cloudconvert');
+```
+
+
+## Creating Jobs
+
+```js
+import CloudConvert from 'cloudconvert';
+
+const cloudConvert = new CloudConvert('api_key');
+
+let job = await cloudConvert.jobs.create({
+    'tasks': {
+        'import-my-file': {
+            'operation': 'import/url',
+            'url': 'https://my-url'
+        },
+        'convert-my-file': {
+            'operation': 'convert',
+            'input': 'import-my-file',
+            'output_format': 'pdf',
+            'some_other_option': 'value'
+        },
+        'export-my-file': {
+            'operation': 'export/url',
+            'input': 'convert-my-file'
+        }
     }
- }))
-.pipe(fs.createWriteStream('out.jpg'))
-.on('finish', function() {
-    console.log('Done!');
 });
 ```
-You can use the [CloudConvert API Console](https://cloudconvert.com/apiconsole) to generate ready-to-use JS code snippets using this wrapper.
+You can use the [CloudConvert Job Builder](https://cloudconvert.com/api/v2/jobs/builder) to see the available options for the various task types.
 
+## Downloading Files
 
-
-The manual way
--------------------
-``cloudconvert.convert()`` creates a Process, start it and waits until it completes. In some cases it might be necessary that you do this steps seperately, as the following example shows:
+CloudConvert can generate public URLs for using `export/url` tasks. You can use these URLs to download output files.
 
 ```js
+job = await cloudConvert.jobs.wait(job.id); // Wait for job completion
 
-var fs = require('fs');
-var cloudconvert = new (require('cloudconvert'))('your_api_key');
+const exportTask = job.tasks.filter(task => task.operation === 'export/url' && task.status === 'finished')[0];
+const file = exportTask.result.files[0];
 
-// create the process. see https://cloudconvert.com/apidoc#create
-cloudconvert.createProcess({inputformat: 'png', outputformat: 'pdf'}, function(err, conversionProcess) {
+const writeStream = fs.createWriteStream('./out/' + file.filename);
 
-    if(err) {
-        console.error('CloudConvert Process creation failed: ' + err);
-    } else {
+http.get(file.url, function(response) {
+  response.pipe(writeStream);
+});
 
-        // start the process. see https://cloudconvert.com/apidoc#create
-        conversionProcess.start({
-            outputformat: 'jpg',
-            converteroptions: {
-                quality : 75,
-            },
-            input: 'upload'
-        }, function (err, conversionProcess) {
-
-            if (err) {
-                console.error('CloudConvert Process start failed: ' + err);
-            } else {
-
-                // upload the input file. see https://cloudconvert.com/apidoc#upload
-                conversionProcess.upload(fs.createReadStream('tests/input.png'), null, function (err, conversionProcess) {
-
-                    if (err) {
-                        console.error('CloudConvert Process upload failed: ' + err);
-                    } else {
-                        // wait until the process is finished (or completed with an error)
-                        conversionProcess.wait(function (err, conversionProcess) {
-                            if (err) {
-                                console.error('CloudConvert Process failed: ' + err);
-                            } else {
-                                console.log('Done: ' + conversionProcess.data.message);
-
-                                // download it
-                                conversionProcess.download(fs.createWriteStream("out.jpg"), null, function (err, conversionProcess) {
-                                    if (err) {
-                                        console.error('CloudConvert Process download failed: ' + err);
-                                    } else {
-                                        console.log('Downloaded to out.jpg');
-                                    }
-                                });
-                            }
-
-                        });
-                    }
-                });
-
-
-            }
-        });
-    }
-
+await new Promise((resolve, reject) => {
+    writeStream.on('finish', resolve);
+    writeStream.on('error', reject);
 });
 ```
 
+## Uploading Files
 
-Download of multiple output files
--------------------
-
-In some cases it might be possible that there are multiple output files (e.g. converting a multi-page PDF to JPG). You can download them all to one directory using the ``downloadAll()`` method.
+Uploads to CloudConvert are done via `import/upload` tasks (see the [docs](https://cloudconvert.com/api/v2/import#import-upload-tasks)). This SDK offers a convenient upload method:
 
 ```js
-var fs = require('fs');
-var cloudconvert = new (require('cloudconvert'))('your_api_key');
-
-fs.createReadStream('tests/input.pdf').pipe(cloudconvert.convert({
-    inputformat: 'pdf',
-    outputformat: 'jpg',
-    converteroptions: {
-        page_range : '1-3',
+const job = await cloudConvert.jobs.create({
+    'tasks': {
+        'upload-my-file': {
+            'operation': 'import/upload'          
+        },
+        // ...
     }
-}).on('error', function(err) {
-    console.error('Failed: ' + err);
-}).on('finished', function(data) {
-    console.log('Done: ' + data.message);
-    this.downloadAll('tests/');
-}).on('downloaded', function(destination) {
-    console.log('Downloaded to: ' + destination.path);
-}).on('downloadedAll', function(path) {
-    console.log('Downloaded all to: ' + path);
-}));
+});
 
+const uploadTask = job.tasks.filter(task => task.name === 'upload-my-file')[0];
+
+const inputFile = fs.createReadStream('./file.pdf');
+
+await cloudConvert.tasks.upload(uploadTask, inputFile);
 ```
 
 
-Events
------------------
-The ``Process``object emits the following Events:
+## Websocket Events
 
-Event|Description
-------|------------
-``error``| The conversion failed. You should always listen for this event: If there is no listener, the error will be thrown and might crash your application.
-``finished``| The conversion is finished (but **not** yet downloaded). This event will only be emitted, if you do ``wait()`` for the process. (``convert()`` does this automatically for you).
-``progress``|Emitted every second with the current progress of the conversion. This event will only be emitted, if you do ``wait()`` for the process. 
-``uploaded``|The input file was uploaded.
-``started``|The process was started.
-``downloaded``|The output file was downloaded.
-``downloadedAll``|Emitted after  completed ``downloadAll()``. Every single file will emit a seperate ``downloaded`` event.
+The node SDK can subscribe to events of the [CloudConvert socket.io API](https://cloudconvert.com/api/v2/socket#socket).
 
-
-Error handling
------------------
-The following example shows how to catch the different error types which can occur at conversions:
 
 ```js
-var fs = require('fs');
-var cloudconvert = new (require('cloudconvert'))('your_api_key');
+const job = await cloudConvert.jobs.create({ ... });
 
-fs.createReadStream('tests/input.pdf').pipe(cloudconvert.convert({
-    inputformat: 'pdf',
-    outputformat: 'jpg',
-}).on('error', function(err) {
-    switch (err.code) {
-        case 400:
-            console.error('Something with your request is wrong: ' + err);
-            break;
-        case 422:
-            console.error('Conversion failed, maybe because of a broken input file: ' + err);
-            break;
-        case 503:
-            console.error('API temporary unavailable: ' + err);
-            console.error('We should retry the conversion in ' + err.retryAfter + ' seconds');
-            break;
-        default:
-            // network problems, etc..
-            console.error('Something else went wrong: ' + err);
-            break;
-    }
-}).on('finished', function(data) {
-    console.log('Done: ' + data.message);
-}));
+// Events for the job
+// Available events: created, updated, finished, error, deleted
+cloudConvert.jobs.subscribeEvent(job.id, 'finished', event => {
+    // Job has finished
+    console.log(event.job);
+});
 
+// Events for all tasks of the job
+// Available events: created, updated, finished, error, deleted
+cloudConvert.jobs.subscribeTaskEvent(job.id, 'finished', event => {
+    // Task has finished
+    console.log(event.task);
+});
 ```
 
+When you don't want to receive any events any more you should close the socket:
+```js
+cloudConvert.socket.close();
+```
 
+## Webhook Signing
 
-How to run tests?
------------------
+The node SDK allows to verify webhook requests received from CloudConvert.
+
+```js
+const payloadString = '...'; // The JSON string from the raw request body.
+const signature = '...'; // The value of the "CloudConvert-Signature" header.
+const signingSecret = '...'; // You can find it in your webhook settings.
+
+const isValid = cloudConvert.webhooks.verify(payloadString, signature, signingSecret); // returns true or false
+```
+
+## Unit Tests
 
 Tests are based on mocha: 
 
-    git https://github.com/cloudconvert/cloudconvert-node.git
-    cd cloudconvert-node
-    npm install -d
-    npm test
+    npm run test
 
 
 
-How to run integration tests?
------------------
+## Integration Tests
 
-By default, mocha does not run integration tests against the real CloudConvert API. To run integration tests, use the `API_KEY` enviroment variable and run the integration tests:
+    npm run test-integration
+    
+    
+By default, this runs the integration tests against the Sandbox API with an official CloudConvert account. If you would like to use your own account, you can set your API key using the `CLOUDCONVERT_API_KEY` enviroment variable. In this case you need to whitelist the following MD5 hashes for Sandbox API (using the CloudConvert dashboard).
 
-    git https://github.com/cloudconvert/cloudconvert-node.git
-    cd cloudconvert-node
-    npm install -d
-    export API_KEY="your_api_key"
-    npm run integration
+    53d6fe6b688c31c565907c81de625046  input.pdf
+    99d4c165f77af02015aa647770286cf9  input.png
     
 
-Resources
----------
+## Resources
 
-* [API Documentation](https://cloudconvert.com/api)
-* [Conversion Types](https://cloudconvert.com/formats)
+* [API v2 Documentation](https://cloudconvert.com/api/v2)
 * [CloudConvert Blog](https://cloudconvert.com/blog)
