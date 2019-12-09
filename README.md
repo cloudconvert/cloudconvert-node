@@ -1,7 +1,7 @@
 # cloudconvert-node
 
 
-> This is the official Node.js SDK v2 (Beta) for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_. 
+> This is the official Node.js SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_. 
 > For API v1, please use [v1 branch](https://github.com/cloudconvert/cloudconvert-node/tree/v1) of this repository.
 
 [![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-node.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-node)
@@ -11,7 +11,7 @@
 ## Installation
 
 
-    npm install --save cloudconvert/cloudconvert-node#v2
+    npm install --save cloudconvert/cloudconvert-node
     
 Load as ESM module:
 
