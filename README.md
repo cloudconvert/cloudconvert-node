@@ -2,7 +2,7 @@ cloudconvert-node
 =======================
 
 > This is the official node.js SDK v1 or the [CloudConvert](https://cloudconvert.com/api/v1) _API v1_. 
-> For API v2, please use [v2 branch](https://github.com/cloudconvert/cloudconvert-node/tree/v2) (Beta) of this repository.
+> For API v2, please use [master branch](https://github.com/cloudconvert/cloudconvert-node/tree/master) of this repository.
 
 
 [![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-node.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-node)
@@ -12,7 +12,7 @@ cloudconvert-node
 Installation
 -------------------
 
-    npm install --save cloudconvert
+    npm install --save cloudconvert@1.1.2
     
 
 Quickstart
