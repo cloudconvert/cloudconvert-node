@@ -65,7 +65,7 @@ const file = exportTask.result.files[0];
 
 const writeStream = fs.createWriteStream('./out/' + file.filename);
 
-http.get(file.url, function(response) {
+https.get(file.url, function(response) {
   response.pipe(writeStream);
 });
 
