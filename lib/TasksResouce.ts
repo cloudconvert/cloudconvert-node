@@ -9,31 +9,31 @@ export default class TasksResource {
     }
 
     async get(id: string, query = null) {
-        const response = await this.cloudConvert?.axios?.get('tasks/' + id, {
+        const response = await this.cloudConvert.axios.get('tasks/' + id, {
             params: query || {}
         });
-        return response?.data.data;
+        return response.data.data;
     }
 
     async wait(id: string) {
-        const response = await this.cloudConvert?.axios?.get('tasks/' + id + '/wait');
-        return response?.data.data;
+        const response = await this.cloudConvert.axios.get('tasks/' + id + '/wait');
+        return response.data.data;
     }
 
     async all(query = null) {
-        const response = await this.cloudConvert?.axios?.get('tasks', {
+        const response = await this.cloudConvert.axios.get('tasks', {
             params: query || {}
         });
-        return response?.data.data;
+        return response.data.data;
     }
 
     async create(operation: string, data = null) {
-        const response = await this.cloudConvert?.axios?.post(operation, data);
-        return response?.data.data;
+        const response = await this.cloudConvert.axios.post(operation, data);
+        return response.data.data;
     }
 
     async delete(id: string) {
-        await this.cloudConvert?.axios?.delete('tasks/' + id);
+        await this.cloudConvert.axios.delete('tasks/' + id);
     }
 
     async upload(task: any, stream: Stream) {
@@ -54,7 +54,7 @@ export default class TasksResource {
 
         formData.append("file", stream);
 
-        return await this.cloudConvert?.axios?.post(task.result.form.url, formData, {
+        return await this.cloudConvert.axios.post(task.result.form.url, formData, {
             headers: {
                 ...formData.getHeaders(),
                 Authorization: null

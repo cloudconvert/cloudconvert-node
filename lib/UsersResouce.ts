@@ -8,8 +8,8 @@ export default class UsersResouce {
     }
 
     async me() {
-        const response = await this.cloudConvert?.axios?.get('users/me');
-        return response?.data.data;
+        const response = await this.cloudConvert.axios.get('users/me');
+        return response.data.data;
     }
 
     async subscribeJobEvent(id: string, event: string, callback: Function) {

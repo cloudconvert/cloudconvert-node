@@ -9,31 +9,31 @@ export default class JobsResource {
     }
 
     async get(id: string, query = null) {
-        const response = await this.cloudConvert?.axios?.get('jobs/' + id, {
+        const response = await this.cloudConvert.axios.get('jobs/' + id, {
             params: query || {}
         });
-        return response?.data.data;
+        return response.data.data;
     }
 
     async wait(id: string) {
-        const response = await this.cloudConvert?.axios?.get('jobs/' + id + '/wait');
-        return response?.data.data;
+        const response = await this.cloudConvert.axios.get('jobs/' + id + '/wait');
+        return response.data.data;
     }
 
     async all(query = null) {
-        const response = await this.cloudConvert?.axios?.get('jobs', {
+        const response = await this.cloudConvert.axios.get('jobs', {
             params: query || {}
         });
-        return response?.data.data;
+        return response.data.data;
     }
 
     async create(data = null) {
-        const response = await this.cloudConvert?.axios?.post('jobs', data);
-        return response?.data.data;
+        const response = await this.cloudConvert.axios.post('jobs', data);
+        return response.data.data;
     }
 
     async delete(id: string) {
-        await this.cloudConvert?.axios?.delete('jobs/' + id);
+        await this.cloudConvert.axios.delete('jobs/' + id);
     }
 
     async subscribeEvent(id: string, event: string, callback: Function) {
