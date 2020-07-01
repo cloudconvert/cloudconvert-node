@@ -1,12 +1,14 @@
 import * as crypto from 'crypto';
+import CloudConvert from './CloudConvert';
 
 export default class WebhooksResouce {
+    private readonly cloudConvert: CloudConvert;
 
-    constructor(cloudConvert) {
+    constructor(cloudConvert: CloudConvert) {
         this.cloudConvert = cloudConvert;
     }
 
-    verify(payloadString, signature, signingSecret) {
+    verify(payloadString: string, signature: string, signingSecret: string) :boolean{
 
         let hmac = crypto.createHmac("sha256", signingSecret);
         let signed = hmac.update(new Buffer(payloadString, 'utf-8')).digest("hex");

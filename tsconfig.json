@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "charset": "utf8",
+        "declaration": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "keyofStringsOnly": true,
+        "module": "commonjs",
+        "newLine": "lf",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noUnusedParameters": true,
+        "outDir": "./built/",
+        "removeComments": false,
+        "sourceMap": true,
+        "incremental": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "es6",
+        "typeRoots": [ "./node_modules/@types"]
+    },
+    "include": ["./lib/*"]
+}

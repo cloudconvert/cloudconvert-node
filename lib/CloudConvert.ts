@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import io from 'socket.io-client';
 import TasksResource from "./TasksResouce";
 import UsersResouce from "./UsersResouce";
@@ -6,9 +6,18 @@ import JobsResouce from "./JobsResouce";
 import WebhooksResouce from "./WebhooksResouce";
 
 export default class CloudConvert {
+    private socket: SocketIOClient.Socket | undefined;
+    private subscribedChannels: Map<string, boolean> | undefined;
+    
+    public readonly apiKey: string;
+    public readonly useSandbox: boolean;
+    public axios: AxiosInstance | undefined;
+    public tasks: TasksResource | undefined;
+    public jobs: JobsResouce | undefined;
+    public users: UsersResouce | undefined;
+    public webhooks: WebhooksResouce | undefined;
 
-
-    constructor(apiKey, useSandbox = false) {
+    constructor(apiKey: string, useSandbox = false) {
 
         this.apiKey = apiKey;
         this.useSandbox = useSandbox;
@@ -37,16 +46,16 @@ export default class CloudConvert {
     }
 
 
-    subscribe(channel, event, callback) {
+    subscribe(channel: string, event: string, callback: Function): void {
 
         if (!this.socket) {
             this.socket = io.connect(this.useSandbox ? 'https://socketio.sandbox.cloudconvert.com' : 'https://socketio.cloudconvert.com', {
                 transports: ['websocket']
             });
-            this.subscribedChannels = {};
+            this.subscribedChannels = new Map<string, boolean>();
         }
 
-        if (!this.subscribedChannels[channel]) {
+        if (!this.subscribedChannels?.get(channel)) {
             this.socket.emit('subscribe', {
                 channel,
                 auth: {
@@ -55,10 +64,10 @@ export default class CloudConvert {
                     }
                 },
             });
-            this.subscribedChannels[channel] = true;
+            this.subscribedChannels?.set(channel, true);
         }
 
-        this.socket.on(event, function (eventChannel, eventData) {
+        this.socket.on(event, function (eventChannel: string, eventData: any) {
             if (channel !== eventChannel) {
                 return;
             }
