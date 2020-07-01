@@ -17,7 +17,7 @@ describe('JobsResouce', () => {
     describe('create()', () => {
 
         beforeEach(() => {
-            this.tmpPath = os.tmpdir() + 'tmp.png';
+            this.tmpPath = os.tmpdir() + '/tmp.png';
         });
 
         it('test upload and download files', async () => {
