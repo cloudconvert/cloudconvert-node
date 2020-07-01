@@ -11,11 +11,12 @@ export default class CloudConvert {
     
     public readonly apiKey: string;
     public readonly useSandbox: boolean;
-    public axios: AxiosInstance | undefined;
-    public tasks: TasksResource | undefined;
-    public jobs: JobsResouce | undefined;
-    public users: UsersResouce | undefined;
-    public webhooks: WebhooksResouce | undefined;
+    
+    public axios!: AxiosInstance;
+    public tasks!: TasksResource;
+    public jobs!: JobsResouce;
+    public users!: UsersResouce;
+    public webhooks!: WebhooksResouce;
 
     constructor(apiKey: string, useSandbox = false) {
 
