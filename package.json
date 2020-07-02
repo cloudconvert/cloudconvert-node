@@ -5,8 +5,9 @@
   "description": "Official Node.js SDK for the CloudConvert API",
   "homepage": "https://github.com/cloudconvert/cloudconvert-node",
   "author": "Josias Montag <josias@montag.info>",
-  "main": "lib/index.js",
-  "module": "lib/CloudConvert.js",
+  "main": "built/index.js",
+  "types": "built/index.d.ts",
+  "module": "built/CloudConvert.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/cloudconvert/cloudconvert-node.git"
@@ -32,8 +33,9 @@
     "lib/"
   ],
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc",
-    "test": "node node_modules/.bin/mocha --require esm tests/unit",
-    "test-integration": "node node_modules/.bin/mocha --require esm tests/integration"
+    "test": "mocha --require esm tests/unit",
+    "test-integration": "mocha --require esm tests/integration"
   }
 }
