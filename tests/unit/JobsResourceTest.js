@@ -3,7 +3,7 @@ import {assert} from "chai";
 import nock from "nock";
 
 
-describe('JobsResouce', () => {
+describe('JobsResource', () => {
 
     beforeEach(() => {
         this.cloudConvert = new CloudConvert('test');

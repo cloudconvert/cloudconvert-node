@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import nock from "nock";
 
 
-describe('TasksResouce', () => {
+describe('TasksResource', () => {
 
     beforeEach(() => {
         this.cloudConvert = new CloudConvert('test');

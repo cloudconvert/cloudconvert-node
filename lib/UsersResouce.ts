@@ -1,6 +1,6 @@
 import CloudConvert, { JobEvent, JobEventData, TaskEvent, TaskEventData } from "./CloudConvert";
 
-export default class UsersResouce {
+export default class UsersResource {
     private readonly cloudConvert: CloudConvert;
 
     constructor(cloudConvert: CloudConvert) {

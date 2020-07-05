@@ -4,7 +4,7 @@ import {assert} from "chai";
 import nock from "nock";
 
 
-describe('UsersResouce', () => {
+describe('UsersResource', () => {
 
     beforeEach(() => {
         this.cloudConvert = new CloudConvert(apiKey, true);

@@ -1,9 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 import io from 'socket.io-client';
-import JobsResouce from "./JobsResouce";
-import TasksResource from "./TasksResouce";
-import UsersResouce from "./UsersResouce";
-import WebhooksResouce from "./WebhooksResouce";
+import JobsResource from "./JobsResource";
+import TasksResource from "./TasksResource";
+import UsersResource from "./UsersResource";
+import WebhooksResource from "./WebhooksResource";
 
 export type JobEvent = 'created' | 'updated' | 'finished' | 'error' | 'deleted'
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'error' | 'deleted'
@@ -28,9 +28,9 @@ export default class CloudConvert {
     
     public axios!: AxiosInstance;
     public tasks!: TasksResource;
-    public jobs!: JobsResouce;
-    public users!: UsersResouce;
-    public webhooks!: WebhooksResouce;
+    public jobs!: JobsResource;
+    public users!: UsersResource;
+    public webhooks!: WebhooksResource;
 
     constructor(apiKey: string, useSandbox = false) {
 
@@ -55,9 +55,9 @@ export default class CloudConvert {
 
     createResources() {
         this.tasks = new TasksResource(this);
-        this.jobs = new JobsResouce(this);
-        this.users = new UsersResouce(this);
-        this.webhooks = new WebhooksResouce(this);
+        this.jobs = new JobsResource(this);
+        this.users = new UsersResource(this);
+        this.webhooks = new WebhooksResource(this);
     }
 
 

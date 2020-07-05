@@ -4,7 +4,7 @@ import nock from "nock";
 import * as fs from 'fs';
 
 
-describe('WebhooksResouce', () => {
+describe('WebhooksResource', () => {
 
     beforeEach(() => {
         this.cloudConvert = new CloudConvert('test');

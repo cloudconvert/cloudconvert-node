@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import CloudConvert from './CloudConvert';
 
-export default class WebhooksResouce {
+export default class WebhooksResource {
     private readonly cloudConvert: CloudConvert;
 
     constructor(cloudConvert: CloudConvert) {

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import apiKey from './ApiKey';
 
 
-describe('TasksResouce', () => {
+describe('TasksResource', () => {
 
 
     beforeEach(() => {

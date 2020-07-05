@@ -6,7 +6,7 @@ import apiKey from './ApiKey';
 import axios from "axios";
 
 
-describe('JobsResouce', () => {
+describe('JobsResource', () => {
 
 
     beforeEach(() => {
