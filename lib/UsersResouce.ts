@@ -1,4 +1,4 @@
-import CloudConvert from "./CloudConvert";
+import CloudConvert, { JobEvent, JobEventData, TaskEvent, TaskEventData } from "./CloudConvert";
 
 export default class UsersResouce {
     private readonly cloudConvert: CloudConvert;
@@ -12,11 +12,11 @@ export default class UsersResouce {
         return response.data.data;
     }
 
-    async subscribeJobEvent(id: string, event: string, callback: Function) {
+    async subscribeJobEvent(id: string, event: JobEvent, callback: (event: JobEventData) => void) {
         this.cloudConvert.subscribe('private-user.' + id + '.jobs', 'job.' + event, callback);
     }
 
-    async subscribeTaskEvent(id: string, event: string, callback: Function) {
+    async subscribeTaskEvent(id: string, event: TaskEvent, callback: (event: TaskEventData) => void) {
         this.cloudConvert.subscribe('private-user.' + id + '.tasks', 'task.' + event, callback);
     }
 

@@ -1,5 +1,5 @@
 import FormData, { Stream } from 'form-data';
-import CloudConvert from './CloudConvert';
+import CloudConvert, { TaskEvent, TaskEventData } from './CloudConvert';
 
 export default class TasksResource {
     private readonly cloudConvert: CloudConvert;
@@ -63,7 +63,7 @@ export default class TasksResource {
 
     }
 
-    async subscribeEvent(id: string, event: string, callback: Function) {
+    async subscribeEvent(id: string, event: TaskEvent, callback: (event: TaskEventData) => void) {
         this.cloudConvert.subscribe('private-task.' + id, 'task.' + event, callback);
     }
 

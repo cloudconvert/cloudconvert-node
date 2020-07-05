@@ -1,5 +1,4 @@
-import FormData from 'form-data';
-import CloudConvert from './CloudConvert';
+import CloudConvert, { JobEventData, TaskEventData } from './CloudConvert';
 
 export default class JobsResource {
     private readonly cloudConvert: CloudConvert;
@@ -36,11 +35,11 @@ export default class JobsResource {
         await this.cloudConvert.axios.delete('jobs/' + id);
     }
 
-    async subscribeEvent(id: string, event: string, callback: Function) {
+    async subscribeEvent(id: string, event: string, callback: (event: JobEventData) => void) {
         this.cloudConvert.subscribe('private-job.' + id, 'job.' + event, callback);
     }
 
-    async subscribeTaskEvent(id: string, event: string, callback: Function) {
+    async subscribeTaskEvent(id: string, event: string, callback: (event: TaskEventData) => void) {
         this.cloudConvert.subscribe('private-job.' + id + '.tasks', 'task.' + event, callback);
     }
 

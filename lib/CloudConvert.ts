@@ -1,9 +1,23 @@
 import axios, { AxiosInstance } from "axios";
 import io from 'socket.io-client';
+import JobsResouce from "./JobsResouce";
 import TasksResource from "./TasksResouce";
 import UsersResouce from "./UsersResouce";
-import JobsResouce from "./JobsResouce";
 import WebhooksResouce from "./WebhooksResouce";
+
+export type JobEvent = 'created' | 'updated' | 'finished' | 'error' | 'deleted'
+export type TaskEvent = 'created' | 'updated' | 'finished' | 'error' | 'deleted'
+
+export interface Job {
+
+}
+
+export interface Task {
+    
+}
+
+export interface JobEventData { job: Job }
+export interface TaskEventData { task: Task }
 
 export default class CloudConvert {
     private socket: SocketIOClient.Socket | undefined;
@@ -47,7 +61,7 @@ export default class CloudConvert {
     }
 
 
-    subscribe(channel: string, event: string, callback: Function): void {
+    subscribe(channel: string, event: string, callback: ((event: JobEventData) => void) | ((event: TaskEventData) => void)): void {
 
         if (!this.socket) {
             this.socket = io.connect(this.useSandbox ? 'https://socketio.sandbox.cloudconvert.com' : 'https://socketio.cloudconvert.com', {
@@ -68,7 +82,7 @@ export default class CloudConvert {
             this.subscribedChannels?.set(channel, true);
         }
 
-        this.socket.on(event, function (eventChannel: string, eventData: any) {
+        this.socket.on(event, function (eventChannel: string, eventData: any): void {
             if (channel !== eventChannel) {
                 return;
             }
