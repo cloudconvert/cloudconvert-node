@@ -1,7 +1,6 @@
 import CloudConvert from './CloudConvert';
 import { Operation, Task, TaskEventData, TaskStatus } from './TasksResource';
 
-// TODO: might by wrong, see https://github.com/cloudconvert/cloudconvert-node/issues/47
 export type JobEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type JobStatus = 'processing' | 'finished' | 'error';
 export interface JobEventData { job: Job }
