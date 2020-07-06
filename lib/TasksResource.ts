@@ -2,7 +2,7 @@ import FormData, { Stream } from 'form-data';
 import CloudConvert from './CloudConvert';
 
 // TODO: might by wrong, see https://github.com/cloudconvert/cloudconvert-node/issues/47
-export type TaskEvent = 'created' | 'updated' | 'finished' | 'error' | 'deleted';
+export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
 export interface TaskEventData { task: Task }
 
