@@ -3,6 +3,7 @@ import { Operation, Task, TaskEventData, TaskStatus } from './TasksResource';
 
 export type JobEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type JobStatus = 'processing' | 'finished' | 'error';
+export type JobTaskStatus = Task['status'] | 'queued'
 export interface JobEventData { job: Job }
 
 export interface Job {
@@ -14,9 +15,10 @@ export interface Job {
     ended_at: string | null;
     tasks: JobTask[];
 }
-type NotPresentWhenInsideJob = 'job_id'
+type NotPresentWhenInsideJob = 'job_id' | 'status'
 interface JobTask extends Omit<Task, NotPresentWhenInsideJob> {
     name: string;
+    status: JobTaskStatus;
 }
 
 export default class JobsResource {
