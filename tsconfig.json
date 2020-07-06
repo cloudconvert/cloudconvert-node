@@ -11,7 +11,7 @@
         "noImplicitReturns": true,
         "noUnusedParameters": true,
         "outDir": "./built/",
-        "removeComments": false,
+        "removeComments": true,
         "sourceMap": true,
         "incremental": true,
         "skipLibCheck": true,
