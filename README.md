@@ -106,14 +106,14 @@ The node SDK can subscribe to events of the [CloudConvert socket.io API](https:/
 const job = await cloudConvert.jobs.create({ ... });
 
 // Events for the job
-// Available events: created, updated, finished, error, deleted
+// Available events: created, updated, finished, failed
 cloudConvert.jobs.subscribeEvent(job.id, 'finished', event => {
     // Job has finished
     console.log(event.job);
 });
 
 // Events for all tasks of the job
-// Available events: created, updated, finished, error, deleted
+// Available events: created, updated, finished, failed
 cloudConvert.jobs.subscribeTaskEvent(job.id, 'finished', event => {
     // Task has finished
     console.log(event.task);
