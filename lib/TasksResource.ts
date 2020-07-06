@@ -317,7 +317,11 @@ export interface Task {
     engine: string;
     engine_version: string;
     payload: any;
-    result: any;
+    result?: { files?: FileResult[]; [key: string]: any; };
+}
+export interface FileResult {
+    filename: string;
+    url?: string;
 }
 
 export default class TasksResource {
