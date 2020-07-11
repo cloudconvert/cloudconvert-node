@@ -1,10 +1,10 @@
-import CloudConvert from '../../lib/CloudConvert.js';
+import CloudConvert from '../../built/CloudConvert.js';
 import {assert} from "chai";
 import nock from "nock";
 import * as fs from 'fs';
 
 
-describe('WebhooksResouce', () => {
+describe('WebhooksResource', () => {
 
     beforeEach(() => {
         this.cloudConvert = new CloudConvert('test');

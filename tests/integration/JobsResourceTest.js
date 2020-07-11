@@ -1,4 +1,4 @@
-import CloudConvert from '../../lib/CloudConvert.js';
+import CloudConvert from '../../built/CloudConvert.js';
 import {assert} from "chai";
 import * as fs from 'fs';
 import * as os from 'os';
@@ -6,7 +6,7 @@ import apiKey from './ApiKey';
 import axios from "axios";
 
 
-describe('JobsResouce', () => {
+describe('JobsResource', () => {
 
 
     beforeEach(() => {
@@ -17,7 +17,7 @@ describe('JobsResouce', () => {
     describe('create()', () => {
 
         beforeEach(() => {
-            this.tmpPath = os.tmpdir() + 'tmp.png';
+            this.tmpPath = os.tmpdir() + '/tmp.png';
         });
 
         it('test upload and download files', async () => {

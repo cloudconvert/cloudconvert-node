@@ -137,24 +137,40 @@ const signingSecret = '...'; // You can find it in your webhook settings.
 const isValid = cloudConvert.webhooks.verify(payloadString, signature, signingSecret); // returns true or false
 ```
 
-## Unit Tests
+## Contributing
 
-Tests are based on mocha: 
+This section is intended for people how want to contribute to the development of this library.
+
+### Getting started
+
+Begin with installing the necessary dependencies by running
+
+    npm install
+
+in the root directory of this repository.
+
+### Building
+
+This project is written in TypeScript so it needs to be compiled first:
+
+    npm run build
+
+This will compile the code in the `lib` directory and generate a `built` directory containing the JS files and the type declarations.
+
+### Unit Tests
+
+Tests are based on mocha:
 
     npm run test
 
-
-
-## Integration Tests
+### Integration Tests
 
     npm run test-integration
-    
-    
+
 By default, this runs the integration tests against the Sandbox API with an official CloudConvert account. If you would like to use your own account, you can set your API key using the `CLOUDCONVERT_API_KEY` enviroment variable. In this case you need to whitelist the following MD5 hashes for Sandbox API (using the CloudConvert dashboard).
 
     53d6fe6b688c31c565907c81de625046  input.pdf
     99d4c165f77af02015aa647770286cf9  input.png
-    
 
 ## Resources
 

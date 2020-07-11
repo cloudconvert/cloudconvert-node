@@ -1,10 +1,10 @@
-import CloudConvert from '../../lib/CloudConvert.js';
+import CloudConvert from '../../built/CloudConvert.js';
 import apiKey from './ApiKey';
 import {assert} from "chai";
 import nock from "nock";
 
 
-describe('UsersResouce', () => {
+describe('UsersResource', () => {
 
     beforeEach(() => {
         this.cloudConvert = new CloudConvert(apiKey, true);

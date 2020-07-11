@@ -1,9 +1,9 @@
-import CloudConvert from '../../lib/CloudConvert.js';
+import CloudConvert from '../../built/CloudConvert.js';
 import {assert} from "chai";
 import nock from "nock";
 
 
-describe('JobsResouce', () => {
+describe('JobsResource', () => {
 
     beforeEach(() => {
         this.cloudConvert = new CloudConvert('test');
