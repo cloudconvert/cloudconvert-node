@@ -139,7 +139,7 @@ const isValid = cloudConvert.webhooks.verify(payloadString, signature, signingSe
 
 ## Contributing
 
-This section is intended for people how want to contribute to the development of this library.
+This section is intended for people who want to contribute to the development of this library.
 
 ### Getting started
 
