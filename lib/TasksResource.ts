@@ -1,5 +1,6 @@
 import FormData, { Stream } from 'form-data';
 import CloudConvert from './CloudConvert';
+import { JobTask } from './JobsResource';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
@@ -359,7 +360,7 @@ export default class TasksResource {
         await this.cloudConvert.axios.delete('tasks/' + id);
     }
 
-    async upload(task: Task, stream: Stream): Promise<any> {
+    async upload(task: Task | JobTask, stream: Stream): Promise<any> {
 
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');

@@ -16,7 +16,7 @@ export interface Job {
     tasks: JobTask[];
 }
 type NotPresentWhenInsideJob = 'job_id' | 'status'
-interface JobTask extends Omit<Task, NotPresentWhenInsideJob> {
+export interface JobTask extends Omit<Task, NotPresentWhenInsideJob> {
     name: string;
     status: JobTaskStatus;
 }
