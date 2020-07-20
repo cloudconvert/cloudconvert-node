@@ -176,6 +176,19 @@ By default, this runs the integration tests against the Sandbox API with an offi
     53d6fe6b688c31c565907c81de625046  input.pdf
     99d4c165f77af02015aa647770286cf9  input.png
 
+### Linting
+
+The project is linted by ESLint+Prettier.
+
+If you're using VSCode, all files will be linted automatically upon saving.
+Otherwise, you can lint the project by running
+
+    npm run lint
+
+and even auto-fix as many things as possible by running
+
+    npm run lint -- --fix
+
 ## Resources
 
 -   [API v2 Documentation](https://cloudconvert.com/api/v2)
