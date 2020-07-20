@@ -1,50 +1,50 @@
 {
-  "name": "cloudconvert",
-  "version": "2.1.2",
-  "license": "MIT",
-  "description": "Official Node.js SDK for the CloudConvert API",
-  "homepage": "https://github.com/cloudconvert/cloudconvert-node",
-  "author": "Josias Montag <josias@montag.info>",
-  "main": "built/index.js",
-  "types": "built/index.d.ts",
-  "module": "built/CloudConvert.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cloudconvert/cloudconvert-node.git"
-  },
-  "bugs": {
-    "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
-  },
-  "dependencies": {
-    "axios": "^0.19.2",
-    "esm": "^3.2.25",
-    "form-data": "^2.5.1",
-    "socket.io-client": "^2.3.0"
-  },
-  "devDependencies": {
-    "@types/node": "^14.0.23",
-    "@types/socket.io-client": "^1.4.33",
-    "@typescript-eslint/eslint-plugin": "^3.6.1",
-    "@typescript-eslint/parser": "^3.6.1",
-    "chai": "^4.2.0",
-    "eslint": "^7.5.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-config-typescript": "^3.0.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "mocha": "^8.0.1",
-    "nock": "^10.0.6",
-    "prettier": "^2.0.5",
-    "typescript": "^3.9.7"
-  },
-  "files": [
-    "lib/",
-    "built/"
-  ],
-  "scripts": {
-    "prepare": "npm run build",
-    "build": "tsc",
-    "test": "mocha --require esm tests/unit",
-    "test-integration": "mocha --require esm tests/integration",
-    "lint": "eslint --ext .ts --ext .js --ext .json ."
-  }
+    "name": "cloudconvert",
+    "version": "2.1.2",
+    "license": "MIT",
+    "description": "Official Node.js SDK for the CloudConvert API",
+    "homepage": "https://github.com/cloudconvert/cloudconvert-node",
+    "author": "Josias Montag <josias@montag.info>",
+    "main": "built/index.js",
+    "types": "built/index.d.ts",
+    "module": "built/CloudConvert.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cloudconvert/cloudconvert-node.git"
+    },
+    "bugs": {
+        "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
+    },
+    "dependencies": {
+        "axios": "^0.19.2",
+        "esm": "^3.2.25",
+        "form-data": "^2.5.1",
+        "socket.io-client": "^2.3.0"
+    },
+    "devDependencies": {
+        "@types/node": "^14.0.23",
+        "@types/socket.io-client": "^1.4.33",
+        "@typescript-eslint/eslint-plugin": "^3.6.1",
+        "@typescript-eslint/parser": "^3.6.1",
+        "chai": "^4.2.0",
+        "eslint": "^7.5.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-config-typescript": "^3.0.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "mocha": "^8.0.1",
+        "nock": "^10.0.6",
+        "prettier": "^2.0.5",
+        "typescript": "^3.9.7"
+    },
+    "files": [
+        "lib/",
+        "built/"
+    ],
+    "scripts": {
+        "prepare": "npm run build",
+        "build": "tsc",
+        "test": "mocha --require esm tests/unit",
+        "test-integration": "mocha --require esm tests/integration",
+        "lint": "eslint --ext .ts --ext .js --ext .json ."
+    }
 }
