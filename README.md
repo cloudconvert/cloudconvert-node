@@ -1,7 +1,6 @@
 # cloudconvert-node
 
-
-> This is the official Node.js SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_. 
+> This is the official Node.js SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_.
 > For API v1, please use [v1 branch](https://github.com/cloudconvert/cloudconvert-node/tree/v1) of this repository.
 
 [![Build Status](https://travis-ci.org/cloudconvert/cloudconvert-node.svg?branch=master)](https://travis-ci.org/cloudconvert/cloudconvert-node)
@@ -10,9 +9,8 @@
 
 ## Installation
 
-
     npm install --save cloudconvert
-    
+
 Load as ESM module:
 
 ```js
@@ -20,10 +18,10 @@ import CloudConvert from 'cloudconvert';
 ```
 
 ... or via require:
+
 ```js
 const CloudConvert = require('cloudconvert');
 ```
-
 
 ## Creating Jobs
 
@@ -33,24 +31,25 @@ import CloudConvert from 'cloudconvert';
 const cloudConvert = new CloudConvert('api_key');
 
 let job = await cloudConvert.jobs.create({
-    'tasks': {
+    tasks: {
         'import-my-file': {
-            'operation': 'import/url',
-            'url': 'https://my-url'
+            operation: 'import/url',
+            url: 'https://my-url'
         },
         'convert-my-file': {
-            'operation': 'convert',
-            'input': 'import-my-file',
-            'output_format': 'pdf',
-            'some_other_option': 'value'
+            operation: 'convert',
+            input: 'import-my-file',
+            output_format: 'pdf',
+            some_other_option: 'value'
         },
         'export-my-file': {
-            'operation': 'export/url',
-            'input': 'convert-my-file'
+            operation: 'export/url',
+            input: 'convert-my-file'
         }
     }
 });
 ```
+
 You can use the [CloudConvert Job Builder](https://cloudconvert.com/api/v2/jobs/builder) to see the available options for the various task types.
 
 ## Downloading Files
@@ -60,13 +59,15 @@ CloudConvert can generate public URLs for using `export/url` tasks. You can use 
 ```js
 job = await cloudConvert.jobs.wait(job.id); // Wait for job completion
 
-const exportTask = job.tasks.filter(task => task.operation === 'export/url' && task.status === 'finished')[0];
+const exportTask = job.tasks.filter(
+    task => task.operation === 'export/url' && task.status === 'finished'
+)[0];
 const file = exportTask.result.files[0];
 
 const writeStream = fs.createWriteStream('./out/' + file.filename);
 
-https.get(file.url, function(response) {
-  response.pipe(writeStream);
+https.get(file.url, function (response) {
+    response.pipe(writeStream);
 });
 
 await new Promise((resolve, reject) => {
@@ -81,10 +82,10 @@ Uploads to CloudConvert are done via `import/upload` tasks (see the [docs](https
 
 ```js
 const job = await cloudConvert.jobs.create({
-    'tasks': {
+    tasks: {
         'upload-my-file': {
-            'operation': 'import/upload'          
-        },
+            operation: 'import/upload'
+        }
         // ...
     }
 });
@@ -96,11 +97,9 @@ const inputFile = fs.createReadStream('./file.pdf');
 await cloudConvert.tasks.upload(uploadTask, inputFile);
 ```
 
-
 ## Websocket Events
 
 The node SDK can subscribe to events of the [CloudConvert socket.io API](https://cloudconvert.com/api/v2/socket#socket).
-
 
 ```js
 const job = await cloudConvert.jobs.create({ ... });
@@ -121,6 +120,7 @@ cloudConvert.jobs.subscribeTaskEvent(job.id, 'finished', event => {
 ```
 
 When you don't want to receive any events any more you should close the socket:
+
 ```js
 cloudConvert.socket.close();
 ```
@@ -134,7 +134,11 @@ const payloadString = '...'; // The JSON string from the raw request body.
 const signature = '...'; // The value of the "CloudConvert-Signature" header.
 const signingSecret = '...'; // You can find it in your webhook settings.
 
-const isValid = cloudConvert.webhooks.verify(payloadString, signature, signingSecret); // returns true or false
+const isValid = cloudConvert.webhooks.verify(
+    payloadString,
+    signature,
+    signingSecret
+); // returns true or false
 ```
 
 ## Contributing
@@ -174,5 +178,5 @@ By default, this runs the integration tests against the Sandbox API with an offi
 
 ## Resources
 
-* [API v2 Documentation](https://cloudconvert.com/api/v2)
-* [CloudConvert Blog](https://cloudconvert.com/blog)
+-   [API v2 Documentation](https://cloudconvert.com/api/v2)
+-   [CloudConvert Blog](https://cloudconvert.com/blog)
