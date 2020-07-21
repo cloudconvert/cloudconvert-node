@@ -416,7 +416,11 @@ export default class TasksResource {
         await this.cloudConvert.axios.delete('tasks/' + id);
     }
 
-    async upload(task: Task | JobTask, stream: Stream): Promise<any> {
+    async upload(
+        task: Task | JobTask,
+        stream: Stream,
+        filename: string | null = null
+    ): Promise<any> {
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');
         }
@@ -431,7 +435,11 @@ export default class TasksResource {
             formData.append(parameter, task.result.form.parameters[parameter]);
         }
 
-        formData.append('file', stream);
+        let fileOptions = {};
+        if (filename) {
+            fileOptions = { filename };
+        }
+        formData.append('file', stream, fileOptions);
 
         return await this.cloudConvert.axios.post(
             task.result.form.url,

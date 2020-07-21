@@ -94,7 +94,7 @@ const uploadTask = job.tasks.filter(task => task.name === 'upload-my-file')[0];
 
 const inputFile = fs.createReadStream('./file.pdf');
 
-await cloudConvert.tasks.upload(uploadTask, inputFile);
+await cloudConvert.tasks.upload(uploadTask, inputFile, 'file.pdf');
 ```
 
 ## Websocket Events
