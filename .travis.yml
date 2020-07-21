@@ -10,4 +10,4 @@ before_script:
 script:
   - npm run lint
   - npm test
-  - npm test-integration
+  - npm run test-integration
