@@ -1,5 +1,8 @@
-.DS_Store
+ .DS_Store
 .idea
 node_modules/
 built/
 package-lock.json
+package.json
+tests/unit/requests/
+tests/unit/responses/
