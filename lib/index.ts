@@ -1,2 +1,2 @@
-import CloudConvert from './CloudConvert'
-export = CloudConvert
+import CloudConvert from './CloudConvert';
+export = CloudConvert;

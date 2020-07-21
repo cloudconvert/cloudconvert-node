@@ -8,14 +8,16 @@ export default class WebhooksResource {
         this.cloudConvert = cloudConvert;
     }
 
-    verify(payloadString: string, signature: string, signingSecret: string): boolean {
-
-        let hmac = crypto.createHmac("sha256", signingSecret);
-        let signed = hmac.update(new Buffer(payloadString, 'utf-8')).digest("hex");
+    verify(
+        payloadString: string,
+        signature: string,
+        signingSecret: string
+    ): boolean {
+        const hmac = crypto.createHmac('sha256', signingSecret);
+        const signed = hmac
+            .update(new Buffer(payloadString, 'utf-8'))
+            .digest('hex');
 
         return signature === signed;
-
     }
-
-
 }

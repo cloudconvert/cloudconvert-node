@@ -4,12 +4,34 @@ import { JobTask } from './JobsResource';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
-export interface TaskEventData { task: Task }
+export interface TaskEventData {
+    task: Task;
+}
 
 export type Operation = ImportOperation | TaskOperation | ExportOperation;
-export type ImportOperation = ImportUpload | ImportUrl | ImportS3 | ImportAzureBlob | ImportGoogleCloudStorage | ImportOpenStack | ImportSFTP;
-export type TaskOperation = TaskConvert | TaskCapture | TaskOptimize | TaskThumbnail | TaskMerge | TaskArchive | TaskCommand;
-export type ExportOperation = ExportUrl | ExportS3 | ExportAzureBlob | ExportGoogleCloudStorage | ExportOpenStack | ExportSFTP;
+export type ImportOperation =
+    | ImportUpload
+    | ImportUrl
+    | ImportS3
+    | ImportAzureBlob
+    | ImportGoogleCloudStorage
+    | ImportOpenStack
+    | ImportSFTP;
+export type TaskOperation =
+    | TaskConvert
+    | TaskCapture
+    | TaskOptimize
+    | TaskThumbnail
+    | TaskMerge
+    | TaskArchive
+    | TaskCommand;
+export type ExportOperation =
+    | ExportUrl
+    | ExportS3
+    | ExportAzureBlob
+    | ExportGoogleCloudStorage
+    | ExportOpenStack
+    | ExportSFTP;
 
 interface ImportUpload {
     operation: 'import/upload';
@@ -26,7 +48,7 @@ interface ImportUrl {
 export interface ImportUrlData {
     url: string;
     filename?: string;
-    headers?: { [key: string]: string; };
+    headers?: { [key: string]: string };
 }
 
 interface ImportS3 {
@@ -142,7 +164,7 @@ export interface TaskCaptureData {
     wait_until?: 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2';
     wait_for_element?: string;
     wait_time?: number;
-    headers?: { [header: string]: string; };
+    headers?: { [header: string]: string };
 }
 
 interface TaskOptimize {
@@ -208,10 +230,22 @@ interface TaskCommandBaseData {
     capture_output?: boolean;
     arguments: string;
 }
-interface TaskCommandFfmpegData         extends TaskCommandBaseData { engine: 'ffmpeg'        ; command: 'ffmpeg' | 'ffprobe'  ; }
-interface TaskCommandGraphicsmagickData extends TaskCommandBaseData { engine: 'graphicsmagick'; command: 'gm'                  ; }
-interface TaskCommandImagemagickData    extends TaskCommandBaseData { engine: 'imagemagick'   ; command: 'convert' | 'identify'; }
-export type TaskCommandData = TaskCommandFfmpegData | TaskCommandGraphicsmagickData | TaskCommandImagemagickData;
+interface TaskCommandFfmpegData extends TaskCommandBaseData {
+    engine: 'ffmpeg';
+    command: 'ffmpeg' | 'ffprobe';
+}
+interface TaskCommandGraphicsmagickData extends TaskCommandBaseData {
+    engine: 'graphicsmagick';
+    command: 'gm';
+}
+interface TaskCommandImagemagickData extends TaskCommandBaseData {
+    engine: 'imagemagick';
+    command: 'convert' | 'identify';
+}
+export type TaskCommandData =
+    | TaskCommandFfmpegData
+    | TaskCommandGraphicsmagickData
+    | TaskCommandImagemagickData;
 
 interface ExportUrl {
     operation: 'export/url';
@@ -237,9 +271,15 @@ export interface ExportS3Data {
     access_key_id: string;
     secret_access_key: string;
     session_token?: string;
-    acl?: 'private' | 'public-read' | 'public-read-write' | 'authenticated-read' | 'bucket-owner-read' | 'bucket-owner-full-control';
+    acl?:
+        | 'private'
+        | 'public-read'
+        | 'public-read-write'
+        | 'authenticated-read'
+        | 'bucket-owner-read'
+        | 'bucket-owner-full-control';
     cache_control?: string;
-    metadata?: object;
+    metadata?: Record<string, unknown>;
     server_side_encryption?: string;
 }
 
@@ -312,13 +352,13 @@ export interface Task {
     created_at: string;
     started_at: string | null;
     ended_at: string | null;
-    depends_on_tasks: { [task: string]: string; };
+    depends_on_tasks: { [task: string]: string };
     retry_of_task_id?: string | null;
     retries?: string[] | null;
     engine: string;
     engine_version: string;
     payload: any;
-    result?: { files?: FileResult[]; [key: string]: any; };
+    result?: { files?: FileResult[]; [key: string]: any };
 }
 export interface FileResult {
     filename: string;
@@ -332,7 +372,10 @@ export default class TasksResource {
         this.cloudConvert = cloudConvert;
     }
 
-    async get(id: string, query: { include: string; } | null = null): Promise<Task> {
+    async get(
+        id: string,
+        query: { include: string } | null = null
+    ): Promise<Task> {
         const response = await this.cloudConvert.axios.get('tasks/' + id, {
             params: query || {}
         });
@@ -340,18 +383,31 @@ export default class TasksResource {
     }
 
     async wait(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.get('tasks/' + id + '/wait');
+        const response = await this.cloudConvert.axios.get(
+            'tasks/' + id + '/wait'
+        );
         return response.data.data;
     }
 
-    async all(query: { 'filter[job_id]'?: string; 'filter[status]'?: TaskStatus; 'filter[operation]'?: Operation['operation']; per_page?: number; page?: number; } | null = null): Promise<Task[]> {
+    async all(
+        query: {
+            'filter[job_id]'?: string;
+            'filter[status]'?: TaskStatus;
+            'filter[operation]'?: Operation['operation'];
+            per_page?: number;
+            page?: number;
+        } | null = null
+    ): Promise<Task[]> {
         const response = await this.cloudConvert.axios.get('tasks', {
             params: query || {}
         });
         return response.data.data;
     }
 
-    async create<O extends Operation['operation']>(operation: O, data: Extract<Operation, { operation: O }>['data'] | null = null): Promise<Task> {
+    async create<O extends Operation['operation']>(
+        operation: O,
+        data: Extract<Operation, { operation: O }>['data'] | null = null
+    ): Promise<Task> {
         const response = await this.cloudConvert.axios.post(operation, data);
         return response.data.data;
     }
@@ -360,8 +416,11 @@ export default class TasksResource {
         await this.cloudConvert.axios.delete('tasks/' + id);
     }
 
-    async upload(task: Task | JobTask, stream: Stream, filename: string | null = null): Promise<any> {
-
+    async upload(
+        task: Task | JobTask,
+        stream: Stream,
+        filename: string | null = null
+    ): Promise<any> {
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');
         }
@@ -378,22 +437,31 @@ export default class TasksResource {
 
         let fileOptions = {};
         if (filename) {
-            fileOptions = {filename: filename};
+            fileOptions = { filename };
         }
-        formData.append("file", stream, fileOptions);
+        formData.append('file', stream, fileOptions);
 
-        return await this.cloudConvert.axios.post(task.result.form.url, formData, {
-            headers: {
-                ...formData.getHeaders(),
-                Authorization: null
+        return await this.cloudConvert.axios.post(
+            task.result.form.url,
+            formData,
+            {
+                headers: {
+                    ...formData.getHeaders(),
+                    Authorization: null
+                }
             }
-        });
-
+        );
     }
 
-    async subscribeEvent(id: string, event: TaskEvent, callback: (event: TaskEventData) => void): Promise<void> {
-        this.cloudConvert.subscribe('private-task.' + id, 'task.' + event, callback);
+    async subscribeEvent(
+        id: string,
+        event: TaskEvent,
+        callback: (event: TaskEventData) => void
+    ): Promise<void> {
+        this.cloudConvert.subscribe(
+            'private-task.' + id,
+            'task.' + event,
+            callback
+        );
     }
-
-
 }
