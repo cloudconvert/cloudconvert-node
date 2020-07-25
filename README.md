@@ -141,6 +141,17 @@ const isValid = cloudConvert.webhooks.verify(
 ); // returns true or false
 ```
 
+## Using Sandbox
+
+You can use the Sandbox to avoid consuming your quota while testing your application. The node SDK allows you to do that.
+
+```js
+// Pass `true` to the constructor
+const cloudConvert = new CloudConvert('api_key', true);
+```
+
+> Don't forget to generate MD5 Hashes for the files you will use for testing.
+
 ## Contributing
 
 This section is intended for people who want to contribute to the development of this library.
