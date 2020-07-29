@@ -445,6 +445,7 @@ export default class TasksResource {
             task.result.form.url,
             formData,
             {
+                maxContentLength: Infinity,
                 headers: {
                     ...formData.getHeaders(),
                     Authorization: null
