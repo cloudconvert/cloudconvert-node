@@ -141,6 +141,31 @@ const isValid = cloudConvert.webhooks.verify(
 ); // returns true or false
 ```
 
+For example, after using [Express body parser](https://www.npmjs.com/package/body-parser) middleware to parse JSON (`bodyParser.json()`), the webhook verification middleware could look like this:
+
+```javascript
+function verifyCloudconvertWebhook(req, res, next) {
+  let payloadString = JSON.stringify(req.body, null, 0); // stringify req.body with no spaces
+  payloadString = payloadString.replace(/\//g, '\\/'); // escape backslashes - replace "/" with "\/"
+
+  const signature = req.get('Cloudconvert-Signature'); // value of the "CloudConvert-Signature" header.
+  const signingSecret =  '...'; // You can find it in your webhook settings.
+
+  const isValid = cloudConvert.webhooks.verify(
+    payloadString,
+    signature,
+    signingSecret
+  );
+
+  if (!isValid) {
+    const err = new Error("Invalid webhook signature");
+    return next(err);
+  }
+
+  return next(); // webhook signature is valid - continue
+}
+```
+
 ## Using Sandbox
 
 You can use the Sandbox to avoid consuming your quota while testing your application. The node SDK allows you to do that.
