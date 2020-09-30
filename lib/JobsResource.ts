@@ -30,7 +30,7 @@ export default class JobsResource {
         this.cloudConvert = cloudConvert;
     }
 
-    async get(id: string, query: null = null): Promise<Job> {
+    async get(id: string, query = null): Promise<Job> {
         const response = await this.cloudConvert.axios.get('jobs/' + id, {
             params: query || {}
         });
@@ -117,7 +117,7 @@ interface TaskExtras<O> extends NamedOperation<O> {
 // Every argument in the tasks object is typed by this (for some operation string O)
 type TaskTemplate<O> = TaskExtras<O> & OperationData<O>;
 // Given a union type U of operation strings, turn each operation string into its TaskTemplate
-type Distribute<U> = U extends any ? TaskTemplate<U> : never;
+type Distribute<U> = U extends unknown ? TaskTemplate<U> : never;
 // Create a union of all possible tasks
 type PossibleOperations = Distribute<PossibleOperationStrings>;
 // Allow any number of names, each typed by a possible operation
