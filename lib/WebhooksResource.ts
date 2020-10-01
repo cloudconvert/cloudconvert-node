@@ -15,7 +15,7 @@ export default class WebhooksResource {
     ): boolean {
         const hmac = crypto.createHmac('sha256', signingSecret);
         const signed = hmac
-            .update(new Buffer(payloadString, 'utf-8'))
+            .update(Buffer.from(payloadString, 'utf-8'))
             .digest('hex');
 
         return signature === signed;
