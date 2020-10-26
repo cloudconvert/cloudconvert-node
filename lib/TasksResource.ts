@@ -361,6 +361,7 @@ export interface Task {
     result?: { files?: FileResult[]; [key: string]: any };
 }
 export interface FileResult {
+    dir?: string;
     filename: string;
     url?: string;
 }
