@@ -24,7 +24,8 @@ export type TaskOperation =
     | TaskThumbnail
     | TaskMerge
     | TaskArchive
-    | TaskCommand;
+    | TaskCommand
+    | TaskMetadata;
 export type ExportOperation =
     | ExportUrl
     | ExportS3
@@ -186,6 +187,10 @@ interface TaskThumbnail {
     operation: 'thumbnail';
     data: TaskThumbnailData;
 }
+interface TaskMetadata {
+    operation: 'metadata';
+    data: TaskMetadataData;
+}
 export interface TaskThumbnailData {
     input: string | string[];
     input_format?: string;
@@ -195,7 +200,14 @@ export interface TaskThumbnailData {
     filename?: string;
     [option: string]: any;
 }
-
+export interface TaskMetadataData {
+    input: string | string[];
+    input_format?: string;
+    engine?: string;
+    engine_version?: string;
+    timeout?: number;
+    [option: string]: any;
+}
 interface TaskMerge {
     operation: 'merge';
     data: TaskMergeData;
