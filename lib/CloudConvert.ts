@@ -77,14 +77,14 @@ export default class CloudConvert {
             this.subscribedChannels?.set(channel, true);
         }
 
-        this.socket.on(event, function (
-            eventChannel: string,
-            eventData: any
-        ): void {
-            if (channel !== eventChannel) {
-                return;
+        this.socket.on(
+            event,
+            function (eventChannel: string, eventData: any): void {
+                if (channel !== eventChannel) {
+                    return;
+                }
+                callback(eventData);
             }
-            callback(eventData);
-        });
+        );
     }
 }

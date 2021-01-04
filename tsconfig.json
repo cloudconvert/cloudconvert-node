@@ -4,6 +4,7 @@
         "declaration": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
+        "noUncheckedIndexedAccess": true,
         "keyofStringsOnly": true,
         "module": "commonjs",
         "newLine": "lf",
