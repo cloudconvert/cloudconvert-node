@@ -459,6 +459,7 @@ export default class TasksResource {
             formData,
             {
                 maxContentLength: Infinity,
+                maxBodyLength: Infinity,
                 headers: {
                     ...formData.getHeaders(),
                     Authorization: null
