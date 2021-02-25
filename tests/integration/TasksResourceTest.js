@@ -24,6 +24,8 @@ describe('TasksResource', () => {
 
             assert.equal(task.status, 'finished');
             assert.equal(task.result.files[0].filename, 'input.png');
+
+            await this.cloudConvert.tasks.delete(task.id);
         }).timeout(30000);
     });
 });

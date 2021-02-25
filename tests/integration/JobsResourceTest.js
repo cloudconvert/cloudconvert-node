@@ -69,6 +69,8 @@ describe('JobsResource', () => {
             const stat = fs.statSync(this.tmpPath);
 
             assert.equal(stat.size, 46937);
+
+            await this.cloudConvert.jobs.delete(job.id);
         }).timeout(30000);
 
         afterEach(() => {
@@ -110,6 +112,8 @@ describe('JobsResource', () => {
             });
 
             assert.equal(event.job.status, 'finished');
+
+            await this.cloudConvert.jobs.delete(job.id);
         }).timeout(30000);
 
         afterEach(() => {
