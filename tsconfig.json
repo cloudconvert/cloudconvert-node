@@ -17,6 +17,7 @@
         "incremental": true,
         "skipLibCheck": true,
         "strict": true,
+        "resolveJsonModule": true,
         "target": "es6",
         "typeRoots": ["./node_modules/@types"]
     },

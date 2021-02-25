@@ -4,6 +4,7 @@ import JobsResource, { JobEventData } from './JobsResource';
 import TasksResource, { TaskEventData } from './TasksResource';
 import UsersResource from './UsersResource';
 import WebhooksResource from './WebhooksResource';
+import { version } from '../package.json';
 
 export default class CloudConvert {
     private socket: SocketIOClient.Socket | undefined;
@@ -34,7 +35,9 @@ export default class CloudConvert {
             headers: {
                 Authorization: 'Bearer ' + this.apiKey,
                 'User-Agent':
-                    'cloudconvert-node/v2 (https://github.com/cloudconvert/cloudconvert-node)'
+                    'cloudconvert-node/v' +
+                    version +
+                    ' (https://github.com/cloudconvert/cloudconvert-node)'
             }
         });
     }

@@ -1,4 +1,4 @@
-import CloudConvert from '../../built/CloudConvert.js';
+import CloudConvert from '../../built/lib/CloudConvert.js';
 import apiKey from './ApiKey';
 import { assert } from 'chai';
 

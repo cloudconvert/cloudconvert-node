@@ -1,12 +1,12 @@
 {
     "name": "cloudconvert",
-    "version": "2.1.8",
+    "version": "2.2.0",
     "license": "MIT",
     "description": "Official Node.js SDK for the CloudConvert API",
     "homepage": "https://github.com/cloudconvert/cloudconvert-node",
     "author": "Josias Montag <josias@montag.info>",
-    "main": "built/index.js",
-    "types": "built/index.d.ts",
+    "main": "built/lib/index.js",
+    "types": "built/lib/index.d.ts",
     "module": "built/CloudConvert.js",
     "repository": {
         "type": "git",

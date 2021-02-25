@@ -1,4 +1,4 @@
-import CloudConvert from '../../built/CloudConvert.js';
+import CloudConvert from '../../built/lib/CloudConvert.js';
 import { assert } from 'chai';
 import * as fs from 'fs';
 import * as os from 'os';
