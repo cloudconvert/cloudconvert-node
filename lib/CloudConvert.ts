@@ -90,4 +90,8 @@ export default class CloudConvert {
             }
         );
     }
+
+    closeSocket(): void {
+        this.socket?.close();
+    }
 }

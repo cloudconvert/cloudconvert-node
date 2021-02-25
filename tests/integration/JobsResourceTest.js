@@ -117,9 +117,7 @@ describe('JobsResource', () => {
         }).timeout(30000);
 
         afterEach(() => {
-            if (this.cloudConvert.socket) {
-                this.cloudConvert.socket.close();
-            }
+            this.cloudConvert.closeSocket();
         });
     });
 });

@@ -122,7 +122,7 @@ cloudConvert.jobs.subscribeTaskEvent(job.id, 'finished', event => {
 When you don't want to receive any events any more you should close the socket:
 
 ```js
-cloudConvert.socket.close();
+cloudConvert.closeSocket();
 ```
 
 ## Webhook Signing
