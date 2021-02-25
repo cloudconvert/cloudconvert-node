@@ -4,6 +4,7 @@ import { JobTask } from './JobsResource';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
+
 export interface TaskEventData {
     task: Task;
 }
@@ -38,6 +39,7 @@ interface ImportUpload {
     operation: 'import/upload';
     data: ImportUploadData;
 }
+
 export interface ImportUploadData {
     redirect?: string;
 }
@@ -46,6 +48,7 @@ interface ImportUrl {
     operation: 'import/url';
     data: ImportUrlData;
 }
+
 export interface ImportUrlData {
     url: string;
     filename?: string;
@@ -56,6 +59,7 @@ interface ImportS3 {
     operation: 'import/s3';
     data: ImportS3Data;
 }
+
 export interface ImportS3Data {
     bucket: string;
     region: string;
@@ -72,6 +76,7 @@ interface ImportAzureBlob {
     operation: 'import/azure/blob';
     data: ImportAzureBlobData;
 }
+
 export interface ImportAzureBlobData {
     storage_account: string;
     storage_access_key?: string;
@@ -86,6 +91,7 @@ interface ImportGoogleCloudStorage {
     operation: 'import/google-cloud-storage';
     data: ImportGoogleCloudStorageData;
 }
+
 export interface ImportGoogleCloudStorageData {
     project_id: string;
     bucket: string;
@@ -100,6 +106,7 @@ interface ImportOpenStack {
     operation: 'import/openstack';
     data: ImportOpenStackData;
 }
+
 export interface ImportOpenStackData {
     auth_url: string;
     username: string;
@@ -115,6 +122,7 @@ interface ImportSFTP {
     operation: 'import/sftp';
     data: ImportSFTPData;
 }
+
 export interface ImportSFTPData {
     host: string;
     port?: number;
@@ -130,6 +138,7 @@ interface TaskConvert {
     operation: 'convert';
     data: TaskConvertData;
 }
+
 export interface TaskConvertData {
     input: string | string[];
     input_format?: string;
@@ -137,6 +146,7 @@ export interface TaskConvertData {
     engine?: string;
     engine_version?: string;
     filename?: string;
+
     [option: string]: any;
 }
 
@@ -144,6 +154,7 @@ interface TaskCapture {
     operation: 'capture-website';
     data: TaskCaptureData;
 }
+
 export interface TaskCaptureData {
     url: string;
     output_format: string;
@@ -172,6 +183,7 @@ interface TaskOptimize {
     operation: 'optimize';
     data: TaskOptimizeData;
 }
+
 export interface TaskOptimizeData {
     input: string | string[];
     input_format?: 'jpg' | 'png' | 'pdf';
@@ -180,6 +192,7 @@ export interface TaskOptimizeData {
     filename?: string;
     quality?: number;
     profile?: 'web' | 'print' | 'archive' | 'mrc' | 'max';
+
     [option: string]: any;
 }
 
@@ -187,10 +200,12 @@ interface TaskThumbnail {
     operation: 'thumbnail';
     data: TaskThumbnailData;
 }
+
 interface TaskMetadata {
     operation: 'metadata';
     data: TaskMetadataData;
 }
+
 export interface TaskThumbnailData {
     input: string | string[];
     input_format?: string;
@@ -198,20 +213,25 @@ export interface TaskThumbnailData {
     engine?: string;
     engine_version?: string;
     filename?: string;
+
     [option: string]: any;
 }
+
 export interface TaskMetadataData {
     input: string | string[];
     input_format?: string;
     engine?: string;
     engine_version?: string;
     timeout?: number;
+
     [option: string]: any;
 }
+
 interface TaskMerge {
     operation: 'merge';
     data: TaskMergeData;
 }
+
 export interface TaskMergeData {
     input: string | string[];
     output_format: 'pdf';
@@ -224,6 +244,7 @@ interface TaskArchive {
     operation: 'archive';
     data: TaskArchiveData;
 }
+
 export interface TaskArchiveData {
     input: string | string[];
     output_format: string;
@@ -236,24 +257,29 @@ interface TaskCommand {
     operation: 'command';
     data: TaskCommandData;
 }
+
 interface TaskCommandBaseData {
     input: string | string[];
     engine_version?: string;
     capture_output?: boolean;
     arguments: string;
 }
+
 interface TaskCommandFfmpegData extends TaskCommandBaseData {
     engine: 'ffmpeg';
     command: 'ffmpeg' | 'ffprobe';
 }
+
 interface TaskCommandGraphicsmagickData extends TaskCommandBaseData {
     engine: 'graphicsmagick';
     command: 'gm';
 }
+
 interface TaskCommandImagemagickData extends TaskCommandBaseData {
     engine: 'imagemagick';
     command: 'convert' | 'identify';
 }
+
 export type TaskCommandData =
     | TaskCommandFfmpegData
     | TaskCommandGraphicsmagickData
@@ -263,6 +289,7 @@ interface ExportUrl {
     operation: 'export/url';
     data: ExportUrlData;
 }
+
 export interface ExportUrlData {
     input: string | string[];
     inline?: boolean;
@@ -273,6 +300,7 @@ interface ExportS3 {
     operation: 'export/s3';
     data: ExportS3Data;
 }
+
 export interface ExportS3Data {
     input: string | string[];
     bucket: string;
@@ -299,6 +327,7 @@ interface ExportAzureBlob {
     operation: 'export/azure/blob';
     data: ExportAzureBlobData;
 }
+
 export interface ExportAzureBlobData {
     input: string | string[];
     storage_account: string;
@@ -313,6 +342,7 @@ interface ExportGoogleCloudStorage {
     operation: 'export/google-cloud-storage';
     data: ExportGoogleCloudStorageData;
 }
+
 export interface ExportGoogleCloudStorageData {
     input: string | string[];
     project_id: string;
@@ -327,6 +357,7 @@ interface ExportOpenStack {
     operation: 'export/openstack';
     data: ExportOpenStackData;
 }
+
 export interface ExportOpenStackData {
     input: string | string[];
     auth_url: string;
@@ -342,6 +373,7 @@ interface ExportSFTP {
     operation: 'export/sftp';
     data: ExportSFTPData;
 }
+
 export interface ExportSFTPData {
     input: string | string[];
     host: string;
@@ -372,6 +404,7 @@ export interface Task {
     payload: any;
     result?: { files?: FileResult[]; [key: string]: any };
 }
+
 export interface FileResult {
     dir?: string;
     filename: string;
@@ -398,6 +431,13 @@ export default class TasksResource {
     async wait(id: string): Promise<Task> {
         const response = await this.cloudConvert.axios.get(
             'tasks/' + id + '/wait'
+        );
+        return response.data.data;
+    }
+
+    async cancel(id: string): Promise<Task> {
+        const response = await this.cloudConvert.axios.post(
+            'tasks/' + id + '/cancel'
         );
         return response.data.data;
     }
