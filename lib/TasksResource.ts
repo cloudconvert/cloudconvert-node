@@ -1,6 +1,7 @@
 import FormData, { Stream } from 'form-data';
 import CloudConvert from './CloudConvert';
 import { JobTask } from './JobsResource';
+import axios from 'axios';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
@@ -494,21 +495,13 @@ export default class TasksResource {
         }
         formData.append('file', stream, fileOptions);
 
-        return await this.cloudConvert.axios.post(
-            task.result.form.url,
-            formData,
-            {
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
-                headers: {
-                    ...formData.getHeaders()
-                },
-                transformRequest: (data, headers) => {
-                    delete headers['Authorization'];
-                    return data;
-                }
+        return await axios.post(task.result.form.url, formData, {
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+            headers: {
+                ...formData.getHeaders()
             }
-        );
+        });
     }
 
     async subscribeEvent(
