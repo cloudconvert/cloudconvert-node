@@ -501,8 +501,11 @@ export default class TasksResource {
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
                 headers: {
-                    ...formData.getHeaders(),
-                    Authorization: null
+                    ...formData.getHeaders()
+                },
+                transformRequest: (data, headers) => {
+                    delete headers['Authorization'];
+                    return data;
                 }
             }
         );
