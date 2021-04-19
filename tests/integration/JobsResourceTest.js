@@ -101,7 +101,7 @@ describe('JobsResource', () => {
                 __dirname + '/../integration/files/input.png'
             );
 
-            await this.cloudConvert.tasks.upload(uploadTask, stream);
+            this.cloudConvert.tasks.upload(uploadTask, stream);
 
             const event = await new Promise(resolve => {
                 this.cloudConvert.jobs.subscribeEvent(
