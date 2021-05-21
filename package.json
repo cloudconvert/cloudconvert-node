@@ -1,6 +1,6 @@
 {
     "name": "cloudconvert",
-    "version": "2.2.3",
+    "version": "2.2.4",
     "license": "MIT",
     "description": "Official Node.js SDK for the CloudConvert API",
     "homepage": "https://github.com/cloudconvert/cloudconvert-node",
