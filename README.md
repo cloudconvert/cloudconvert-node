@@ -1,7 +1,6 @@
 # cloudconvert-node
 
-> This is the official Node.js SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) _API v2_.
-> For API v1, please use [v1 branch](https://github.com/cloudconvert/cloudconvert-node/tree/v1) of this repository.
+This is the official Node.js SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) **API v2**.
 
 [![Node.js Run Tests](https://github.com/cloudconvert/cloudconvert-node/actions/workflows/run-tests.yml/badge.svg)](https://github.com/cloudconvert/cloudconvert-node/actions/workflows/run-tests.yml)
 [![npm](https://img.shields.io/npm/v/cloudconvert.svg)](https://www.npmjs.com/package/cloudconvert)
