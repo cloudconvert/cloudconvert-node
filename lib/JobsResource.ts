@@ -125,7 +125,7 @@ interface TaskContainer {
     [name: string]: PossibleOperations;
 }
 // Add the other properties that are required for job creation
-interface JobTemplate {
+export interface JobTemplate {
     tasks: TaskContainer;
     tag?: string;
 }

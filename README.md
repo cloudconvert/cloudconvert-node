@@ -140,7 +140,39 @@ const isValid = cloudConvert.webhooks.verify(
 ); // returns true or false
 ```
 
-## Using Sandbox
+## Signed URLs
+
+Signed URLs allow converting files on demand only using URL query parameters. The node.js SDK allows to generate such URLs. Therefore, you need to obtain a signed URL base and a signing secret on the [CloudConvert Dashboard](https://cloudconvert.com/dashboard/api/v2/signed-urls).
+
+```js
+const signedUrlBase = 'https://s.cloudconvert.com/...'; // You can find it in your signed URL settings.
+const signingSecret = '...'; // You can find it in your signed URL settings.
+const cacheKey = 'cache-key'; // Allows caching of the result file for 24h
+
+const job = {
+    tasks: {
+        'import-it': {
+            operation: 'import/url',
+            url: 'https://some.url',
+            filename: 'logo.png'
+        },
+        'export-it': {
+            operation: 'export/url',
+            input: 'import-it',
+            inline: true
+        }
+    }
+};
+
+const url = cloudConvert.signedUrls.sign(
+    signedUrlBase,
+    signingSecret,
+    job,
+    cacheKey
+); // returns the generated URL
+```
+
+## Using the Sandbox
 
 You can use the Sandbox to avoid consuming your quota while testing your application. The node SDK allows you to do that.
 
