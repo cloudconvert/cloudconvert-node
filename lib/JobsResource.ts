@@ -38,9 +38,11 @@ export default class JobsResource {
     }
 
     async wait(id: string): Promise<Job> {
-        const response = await this.cloudConvert.axios.get(
-            'jobs/' + id + '/wait'
-        );
+        const response = await this.cloudConvert.axios.get('jobs/' + id, {
+            baseURL: this.cloudConvert.useSandbox
+                ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
+                : 'https://sync.api.cloudconvert.com/v2/'
+        });
         return response.data.data;
     }
 

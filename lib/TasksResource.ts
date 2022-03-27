@@ -430,9 +430,11 @@ export default class TasksResource {
     }
 
     async wait(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.get(
-            'tasks/' + id + '/wait'
-        );
+        const response = await this.cloudConvert.axios.get('tasks/' + id, {
+            baseURL: this.cloudConvert.useSandbox
+                ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
+                : 'https://sync.api.cloudconvert.com/v2/'
+        });
         return response.data.data;
     }
 
