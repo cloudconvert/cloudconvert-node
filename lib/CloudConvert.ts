@@ -5,6 +5,7 @@ import TasksResource, { TaskEventData } from './TasksResource';
 import UsersResource from './UsersResource';
 import WebhooksResource from './WebhooksResource';
 import { version } from '../package.json';
+import SignedUrlResource from './SignedUrlResource';
 
 export default class CloudConvert {
     private socket: SocketIOClient.Socket | undefined;
@@ -18,6 +19,7 @@ export default class CloudConvert {
     public jobs!: JobsResource;
     public users!: UsersResource;
     public webhooks!: WebhooksResource;
+    public signedUrls!: SignedUrlResource;
 
     constructor(apiKey: string, useSandbox = false) {
         this.apiKey = apiKey;
@@ -47,6 +49,7 @@ export default class CloudConvert {
         this.jobs = new JobsResource(this);
         this.users = new UsersResource(this);
         this.webhooks = new WebhooksResource(this);
+        this.signedUrls = new SignedUrlResource(this);
     }
 
     subscribe(
