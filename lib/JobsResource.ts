@@ -1,5 +1,10 @@
 import CloudConvert from './CloudConvert';
-import { Operation, Task, TaskEventData, TaskStatus } from './TasksResource';
+import {
+    type Operation,
+    type Task,
+    type TaskEventData,
+    type TaskStatus
+} from './TasksResource';
 
 export type JobEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type JobStatus = 'processing' | 'finished' | 'error';
@@ -31,14 +36,14 @@ export default class JobsResource {
     }
 
     async get(id: string, query = null): Promise<Job> {
-        const response = await this.cloudConvert.axios.get('jobs/' + id, {
+        const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
             params: query || {}
         });
         return response.data.data;
     }
 
     async wait(id: string): Promise<Job> {
-        const response = await this.cloudConvert.axios.get('jobs/' + id, {
+        const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
             baseURL: this.cloudConvert.useSandbox
                 ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
                 : 'https://sync.api.cloudconvert.com/v2/'
@@ -68,7 +73,7 @@ export default class JobsResource {
     }
 
     async delete(id: string): Promise<void> {
-        await this.cloudConvert.axios.delete('jobs/' + id);
+        await this.cloudConvert.axios.delete(`jobs/${id}`);
     }
 
     async subscribeEvent(
@@ -77,8 +82,8 @@ export default class JobsResource {
         callback: (event: JobEventData) => void
     ): Promise<void> {
         this.cloudConvert.subscribe(
-            'private-job.' + id,
-            'job.' + event,
+            `private-job.${id}`,
+            `job.${event}`,
             callback
         );
     }
@@ -89,8 +94,8 @@ export default class JobsResource {
         callback: (event: TaskEventData) => void
     ): Promise<void> {
         this.cloudConvert.subscribe(
-            'private-job.' + id + '.tasks',
-            'task.' + event,
+            `private-job.${id}.tasks`,
+            `task.${event}`,
             callback
         );
     }

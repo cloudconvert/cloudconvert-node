@@ -1,7 +1,7 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 import io from 'socket.io-client';
-import JobsResource, { JobEventData } from './JobsResource';
-import TasksResource, { TaskEventData } from './TasksResource';
+import JobsResource, { type JobEventData } from './JobsResource';
+import TasksResource, { type TaskEventData } from './TasksResource';
 import UsersResource from './UsersResource';
 import WebhooksResource from './WebhooksResource';
 import { version } from '../package.json';
@@ -35,11 +35,8 @@ export default class CloudConvert {
                 ? 'https://api.sandbox.cloudconvert.com/v2/'
                 : 'https://api.cloudconvert.com/v2/',
             headers: {
-                Authorization: 'Bearer ' + this.apiKey,
-                'User-Agent':
-                    'cloudconvert-node/v' +
-                    version +
-                    ' (https://github.com/cloudconvert/cloudconvert-node)'
+                Authorization: `Bearer ${this.apiKey}`,
+                'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`
             }
         });
     }
@@ -48,8 +45,8 @@ export default class CloudConvert {
         this.tasks = new TasksResource(this);
         this.jobs = new JobsResource(this);
         this.users = new UsersResource(this);
-        this.webhooks = new WebhooksResource(this);
-        this.signedUrls = new SignedUrlResource(this);
+        this.webhooks = new WebhooksResource();
+        this.signedUrls = new SignedUrlResource();
     }
 
     subscribe(
@@ -76,7 +73,7 @@ export default class CloudConvert {
                 channel,
                 auth: {
                     headers: {
-                        Authorization: 'Bearer ' + this.apiKey
+                        Authorization: `Bearer ${this.apiKey}`
                     }
                 }
             });

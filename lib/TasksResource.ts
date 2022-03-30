@@ -1,6 +1,6 @@
-import FormData, { Stream } from 'form-data';
+import FormData, { type Stream } from 'form-data';
 import CloudConvert from './CloudConvert';
-import { JobTask } from './JobsResource';
+import { type JobTask } from './JobsResource';
 import axios from 'axios';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
@@ -423,14 +423,14 @@ export default class TasksResource {
         id: string,
         query: { include: string } | null = null
     ): Promise<Task> {
-        const response = await this.cloudConvert.axios.get('tasks/' + id, {
+        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
             params: query || {}
         });
         return response.data.data;
     }
 
     async wait(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.get('tasks/' + id, {
+        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
             baseURL: this.cloudConvert.useSandbox
                 ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
                 : 'https://sync.api.cloudconvert.com/v2/'
@@ -440,7 +440,7 @@ export default class TasksResource {
 
     async cancel(id: string): Promise<Task> {
         const response = await this.cloudConvert.axios.post(
-            'tasks/' + id + '/cancel'
+            `tasks/${id}/cancel`
         );
         return response.data.data;
     }
@@ -464,12 +464,15 @@ export default class TasksResource {
         operation: O,
         data: Extract<Operation, { operation: O }>['data'] | null = null
     ): Promise<Task> {
-        const response = await this.cloudConvert.axios.post(operation, data);
+        const response = await this.cloudConvert.axios.post<any>(
+            operation,
+            data
+        );
         return response.data.data;
     }
 
     async delete(id: string): Promise<void> {
-        await this.cloudConvert.axios.delete('tasks/' + id);
+        await this.cloudConvert.axios.delete(`tasks/${id}`);
     }
 
     async upload(
@@ -512,8 +515,8 @@ export default class TasksResource {
         callback: (event: TaskEventData) => void
     ): Promise<void> {
         this.cloudConvert.subscribe(
-            'private-task.' + id,
-            'task.' + event,
+            `private-task.${id}`,
+            `task.${event}`,
             callback
         );
     }

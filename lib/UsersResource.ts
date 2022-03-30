@@ -1,6 +1,6 @@
 import CloudConvert from './CloudConvert';
-import { JobEvent, JobEventData } from './JobsResource';
-import { TaskEvent, TaskEventData } from './TasksResource';
+import { type JobEvent, type JobEventData } from './JobsResource';
+import { type TaskEvent, type TaskEventData } from './TasksResource';
 
 export interface User {
     id: string;
@@ -28,8 +28,8 @@ export default class UsersResource {
         callback: (event: JobEventData) => void
     ): Promise<void> {
         this.cloudConvert.subscribe(
-            'private-user.' + id + '.jobs',
-            'job.' + event,
+            `private-user.${id}.jobs`,
+            `job.${event}`,
             callback
         );
     }
@@ -40,8 +40,8 @@ export default class UsersResource {
         callback: (event: TaskEventData) => void
     ): Promise<void> {
         this.cloudConvert.subscribe(
-            'private-user.' + id + '.tasks',
-            'task.' + event,
+            `private-user.${id}.tasks`,
+            `task.${event}`,
             callback
         );
     }
