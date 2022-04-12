@@ -1,46 +1,46 @@
 {
-  "name": "cloudconvert",
-  "version": "2.3.0",
-  "license": "MIT",
-  "description": "Official Node.js SDK for the CloudConvert API",
-  "homepage": "https://github.com/cloudconvert/cloudconvert-node",
-  "author": "Josias Montag <josias@montag.info>",
-  "main": "built/lib/index.js",
-  "types": "built/lib/index.d.ts",
-  "module": "built/lib/CloudConvert.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cloudconvert/cloudconvert-node.git"
-  },
-  "bugs": {
-    "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
-  },
-  "dependencies": {
-    "axios": "^0.26.1",
-    "esm": "^3.2.25",
-    "form-data": "^4.0.0",
-    "socket.io-client": "^4.4.1"
-  },
-  "devDependencies": {
-    "@types/node": "^17.0.23",
-    "@types/socket.io-client": "^1.4.36",
-    "@typescript-eslint/eslint-plugin": "^5.17.0",
-    "@typescript-eslint/parser": "^5.17.0",
-    "chai": "^4.3.6",
-    "eslint": "^8.12.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-config-typescript": "^3.0.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "mocha": "^9.2.2",
-    "nock": "^13.2.4",
-    "prettier": "^2.6.1",
-    "typescript": "^4.6.3"
-  },
-  "scripts": {
-    "prepare": "npm run build",
-    "build": "tsc",
-    "test": "mocha tests/unit",
-    "test-integration": "mocha tests/integration",
-    "lint": "eslint --ext .ts --ext .js --ext .json ."
-  }
+    "name": "cloudconvert",
+    "version": "2.3.0",
+    "license": "MIT",
+    "description": "Official Node.js SDK for the CloudConvert API",
+    "homepage": "https://github.com/cloudconvert/cloudconvert-node",
+    "author": "Josias Montag <josias@montag.info>",
+    "main": "built/lib/index.js",
+    "types": "built/lib/index.d.ts",
+    "module": "built/lib/CloudConvert.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cloudconvert/cloudconvert-node.git"
+    },
+    "bugs": {
+        "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
+    },
+    "dependencies": {
+        "axios": "^0.26.1",
+        "esm": "^3.2.25",
+        "form-data": "^4.0.0",
+        "socket.io-client": "^4.4.1"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.23",
+        "@types/socket.io-client": "^1.4.36",
+        "@typescript-eslint/eslint-plugin": "^5.17.0",
+        "@typescript-eslint/parser": "^5.17.0",
+        "chai": "^4.3.6",
+        "eslint": "^8.12.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-config-typescript": "^3.0.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "mocha": "^9.2.2",
+        "nock": "^13.2.4",
+        "prettier": "^2.6.1",
+        "typescript": "^4.6.3"
+    },
+    "scripts": {
+        "prepare": "npm run build",
+        "build": "tsc",
+        "test": "mocha tests/unit",
+        "test-integration": "mocha tests/integration",
+        "lint": "eslint --ext .ts --ext .js --ext .json ."
+    }
 }
