@@ -135,4 +135,5 @@ interface TaskContainer {
 export interface JobTemplate {
     tasks: TaskContainer;
     tag?: string;
+    webhook_url?: string;
 }
