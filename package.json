@@ -24,23 +24,23 @@
     "devDependencies": {
         "@types/node": "^17.0.23",
         "@types/socket.io-client": "^1.4.36",
-        "@typescript-eslint/eslint-plugin": "^5.17.0",
-        "@typescript-eslint/parser": "^5.17.0",
+        "@typescript-eslint/eslint-plugin": "^5.19.0",
+        "@typescript-eslint/parser": "^5.19.0",
         "chai": "^4.3.6",
-        "eslint": "^8.12.0",
+        "eslint": "^8.13.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-config-typescript": "^3.0.0",
         "eslint-plugin-prettier": "^4.0.0",
-        "mocha": "^9.2.2",
+        "mocha": "^8.4.0",
         "nock": "^13.2.4",
-        "prettier": "^2.6.1",
+        "prettier": "^2.6.2",
         "typescript": "^4.6.3"
     },
     "scripts": {
         "prepare": "npm run build",
         "build": "tsc",
-        "test": "mocha tests/unit",
-        "test-integration": "mocha tests/integration",
+        "test": "mocha --require esm tests/unit",
+        "test-integration": "mocha --require esm tests/integration",
         "lint": "eslint --ext .ts --ext .js --ext .json ."
     }
 }
