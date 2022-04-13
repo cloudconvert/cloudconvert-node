@@ -1,6 +1,6 @@
-import FormData, { Stream } from 'form-data';
+import FormData, { type Stream } from 'form-data';
 import CloudConvert from './CloudConvert';
-import { JobTask } from './JobsResource';
+import { type JobTask } from './JobsResource';
 import axios from 'axios';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
@@ -12,8 +12,10 @@ export interface TaskEventData {
 
 export type Operation = ImportOperation | TaskOperation | ExportOperation;
 export type ImportOperation =
-    | ImportUpload
     | ImportUrl
+    | ImportUpload
+    | ImportBase64
+    | ImportRaw
     | ImportS3
     | ImportAzureBlob
     | ImportGoogleCloudStorage
@@ -21,13 +23,14 @@ export type ImportOperation =
     | ImportSFTP;
 export type TaskOperation =
     | TaskConvert
-    | TaskCapture
     | TaskOptimize
+    | TaskCapture
     | TaskThumbnail
     | TaskMerge
     | TaskArchive
     | TaskCommand
-    | TaskMetadata;
+    | TaskMetadata
+    | TaskMetadataWrite;
 export type ExportOperation =
     | ExportUrl
     | ExportS3
@@ -35,15 +38,6 @@ export type ExportOperation =
     | ExportGoogleCloudStorage
     | ExportOpenStack
     | ExportSFTP;
-
-interface ImportUpload {
-    operation: 'import/upload';
-    data: ImportUploadData;
-}
-
-export interface ImportUploadData {
-    redirect?: string;
-}
 
 interface ImportUrl {
     operation: 'import/url';
@@ -54,6 +48,35 @@ export interface ImportUrlData {
     url: string;
     filename?: string;
     headers?: { [key: string]: string };
+}
+
+interface ImportUpload {
+    operation: 'import/upload';
+    data: ImportUploadData;
+}
+
+export interface ImportUploadData {
+    redirect?: string;
+}
+
+interface ImportBase64 {
+    operation: 'import/base64';
+    data: ImportBase64Data;
+}
+
+export interface ImportBase64Data {
+    file: string;
+    filename: string;
+}
+
+interface ImportRaw {
+    operation: 'import/raw';
+    data: ImportRawData;
+}
+
+export interface ImportRawData {
+    file: string;
+    filename: string;
 }
 
 interface ImportS3 {
@@ -147,6 +170,25 @@ export interface TaskConvertData {
     engine?: string;
     engine_version?: string;
     filename?: string;
+    timeout?: number;
+
+    [option: string]: any;
+}
+
+interface TaskOptimize {
+    operation: 'optimize';
+    data: TaskOptimizeData;
+}
+
+export interface TaskOptimizeData {
+    input: string | string[];
+    input_format?: 'jpg' | 'png' | 'pdf';
+    engine?: string;
+    engine_version?: string;
+    filename?: string;
+    timeout?: number;
+    quality?: number;
+    profile?: 'web' | 'print' | 'archive' | 'mrc' | 'max';
 
     [option: string]: any;
 }
@@ -162,6 +204,7 @@ export interface TaskCaptureData {
     engine?: string;
     engine_version?: string;
     filename?: string;
+    timeout?: number;
     pages?: string;
     zoom?: number;
     page_width?: number;
@@ -180,31 +223,9 @@ export interface TaskCaptureData {
     headers?: { [header: string]: string };
 }
 
-interface TaskOptimize {
-    operation: 'optimize';
-    data: TaskOptimizeData;
-}
-
-export interface TaskOptimizeData {
-    input: string | string[];
-    input_format?: 'jpg' | 'png' | 'pdf';
-    engine?: string;
-    engine_version?: string;
-    filename?: string;
-    quality?: number;
-    profile?: 'web' | 'print' | 'archive' | 'mrc' | 'max';
-
-    [option: string]: any;
-}
-
 interface TaskThumbnail {
     operation: 'thumbnail';
     data: TaskThumbnailData;
-}
-
-interface TaskMetadata {
-    operation: 'metadata';
-    data: TaskMetadataData;
 }
 
 export interface TaskThumbnailData {
@@ -214,8 +235,14 @@ export interface TaskThumbnailData {
     engine?: string;
     engine_version?: string;
     filename?: string;
+    timeout?: number;
 
     [option: string]: any;
+}
+
+interface TaskMetadata {
+    operation: 'metadata';
+    data: TaskMetadataData;
 }
 
 export interface TaskMetadataData {
@@ -223,6 +250,23 @@ export interface TaskMetadataData {
     input_format?: string;
     engine?: string;
     engine_version?: string;
+    timeout?: number;
+
+    [option: string]: any;
+}
+
+interface TaskMetadataWrite {
+    operation: 'metadata/write';
+    data: TaskMetadataWriteData;
+}
+
+export interface TaskMetadataWriteData {
+    input: string | string[];
+    input_format?: string;
+    engine?: string;
+    engine_version?: string;
+    metadata: Record<string, string | number>;
+    filename?: string;
     timeout?: number;
 
     [option: string]: any;
@@ -239,6 +283,7 @@ export interface TaskMergeData {
     engine?: string;
     engine_version?: string;
     filename?: string;
+    timeout?: number;
 }
 
 interface TaskArchive {
@@ -252,6 +297,7 @@ export interface TaskArchiveData {
     engine?: string;
     engine_version?: string;
     filename?: string;
+    timeout?: number;
 }
 
 interface TaskCommand {
@@ -263,6 +309,7 @@ interface TaskCommandBaseData {
     input: string | string[];
     engine_version?: string;
     capture_output?: boolean;
+    timeout?: number;
     arguments: string;
 }
 
@@ -423,14 +470,14 @@ export default class TasksResource {
         id: string,
         query: { include: string } | null = null
     ): Promise<Task> {
-        const response = await this.cloudConvert.axios.get('tasks/' + id, {
+        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
             params: query || {}
         });
         return response.data.data;
     }
 
     async wait(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.get('tasks/' + id, {
+        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
             baseURL: this.cloudConvert.useSandbox
                 ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
                 : 'https://sync.api.cloudconvert.com/v2/'
@@ -440,7 +487,7 @@ export default class TasksResource {
 
     async cancel(id: string): Promise<Task> {
         const response = await this.cloudConvert.axios.post(
-            'tasks/' + id + '/cancel'
+            `tasks/${id}/cancel`
         );
         return response.data.data;
     }
@@ -464,12 +511,15 @@ export default class TasksResource {
         operation: O,
         data: Extract<Operation, { operation: O }>['data'] | null = null
     ): Promise<Task> {
-        const response = await this.cloudConvert.axios.post(operation, data);
+        const response = await this.cloudConvert.axios.post<any>(
+            operation,
+            data
+        );
         return response.data.data;
     }
 
     async delete(id: string): Promise<void> {
-        await this.cloudConvert.axios.delete('tasks/' + id);
+        await this.cloudConvert.axios.delete(`tasks/${id}`);
     }
 
     async upload(
@@ -512,8 +562,8 @@ export default class TasksResource {
         callback: (event: TaskEventData) => void
     ): Promise<void> {
         this.cloudConvert.subscribe(
-            'private-task.' + id,
-            'task.' + event,
+            `private-task.${id}`,
+            `task.${event}`,
             callback
         );
     }
