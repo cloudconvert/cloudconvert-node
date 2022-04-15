@@ -1,6 +1,6 @@
 // ex. scripts/build_npm.ts
 import { build, emptyDir } from 'https://deno.land/x/dnt@0.23.0/mod.ts';
-import { version } from './deno/lib/version.ts';
+import { version } from './lib/version.ts';
 
 await emptyDir('./npm');
 
