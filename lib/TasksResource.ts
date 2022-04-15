@@ -170,6 +170,7 @@ export interface TaskConvertData {
     filename?: string;
     timeout?: number;
 
+    // deno-lint-ignore no-explicit-any
     [option: string]: any;
 }
 
@@ -188,6 +189,7 @@ export interface TaskOptimizeData {
     quality?: number;
     profile?: 'web' | 'print' | 'archive' | 'mrc' | 'max';
 
+    // deno-lint-ignore no-explicit-any
     [option: string]: any;
 }
 
@@ -235,6 +237,7 @@ export interface TaskThumbnailData {
     filename?: string;
     timeout?: number;
 
+    // deno-lint-ignore no-explicit-any
     [option: string]: any;
 }
 
@@ -250,6 +253,7 @@ export interface TaskMetadataData {
     engine_version?: string;
     timeout?: number;
 
+    // deno-lint-ignore no-explicit-any
     [option: string]: any;
 }
 
@@ -267,6 +271,7 @@ export interface TaskMetadataWriteData {
     filename?: string;
     timeout?: number;
 
+    // deno-lint-ignore no-explicit-any
     [option: string]: any;
 }
 
@@ -447,7 +452,9 @@ export interface Task {
     retries?: string[] | null;
     engine: string;
     engine_version: string;
+    // deno-lint-ignore no-explicit-any
     payload: any;
+    // deno-lint-ignore no-explicit-any
     result?: { files?: FileResult[]; [key: string]: any };
 }
 
@@ -525,6 +532,7 @@ export default class TasksResource {
         task: Task | JobTask,
         file: string | Blob,
         filename: string | null = null,
+        // deno-lint-ignore no-explicit-any
     ): Promise<any> {
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');
@@ -548,11 +556,11 @@ export default class TasksResource {
         });
     }
 
-    async subscribeEvent(
+    subscribeEvent(
         id: string,
         event: TaskEvent,
         callback: (event: TaskEventData) => void,
-    ): Promise<void> {
+    ): void {
         this.cloudConvert.subscribe(
             `private-task.${id}`,
             `task.${event}`,

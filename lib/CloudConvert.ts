@@ -13,6 +13,7 @@ interface ApiCallParams {
 }
 
 export default class CloudConvert {
+    // deno-lint-ignore no-explicit-any
     private socket?: any;
     private subscribedChannels: Map<string, boolean> | undefined;
 
@@ -85,6 +86,7 @@ export default class CloudConvert {
 
         this.socket.on(
             event,
+            // deno-lint-ignore no-explicit-any
             function (eventChannel: string, eventData: any): void {
                 if (channel !== eventChannel) {
                     return;

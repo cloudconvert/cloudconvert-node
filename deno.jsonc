@@ -5,8 +5,9 @@
             "singleQuote": true,
             "proseWrap": "preserve"
         },
-        "files": { "exclude": ["./node_modules/"] }
+        "files": { "exclude": ["./node_modules/", "./npm/"] }
     },
+    "lint": { "files": { "exclude": ["./node_modules/", "./npm/"] } },
     "tasks": {
         "check": "deno cache lib/mod.ts --unstable",
         "build": "deno run -A build.ts",

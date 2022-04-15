@@ -6,7 +6,7 @@ describe('WebhooksResource', () => {
     });
 
     describe('verify()', () => {
-        it('should verify the payload', async () => {
+        it('should verify the payload', () => {
             const secret = 'secret';
             const signature =
                 '576b653f726c85265a389532988f483b5c7d7d5f40cede5f5ddf9c3f02934f35';

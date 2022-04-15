@@ -79,11 +79,11 @@ export default class JobsResource {
         await this.cloudConvert.callApi(`jobs/${id}`, { method: 'DELETE' });
     }
 
-    async subscribeEvent(
+    subscribeEvent(
         id: string,
         event: string,
         callback: (event: JobEventData) => void,
-    ): Promise<void> {
+    ): void {
         this.cloudConvert.subscribe(
             `private-job.${id}`,
             `job.${event}`,
@@ -91,11 +91,11 @@ export default class JobsResource {
         );
     }
 
-    async subscribeTaskEvent(
+    subscribeTaskEvent(
         id: string,
         event: string,
         callback: (event: TaskEventData) => void,
-    ): Promise<void> {
+    ): void {
         this.cloudConvert.subscribe(
             `private-job.${id}.tasks`,
             `task.${event}`,

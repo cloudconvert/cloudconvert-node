@@ -6,7 +6,7 @@ describe('SignedUrlResource', () => {
     });
 
     describe('create()', () => {
-        it('should create a signed URL', async () => {
+        it('should create a signed URL', () => {
             const base =
                 'https://s.cloudconvert.com/b3d85428-584e-4639-bc11-76b7dee9c109';
             const signingSecret = 'NT8dpJkttEyfSk3qlRgUJtvTkx64vhyX';

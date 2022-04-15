@@ -76,7 +76,7 @@ describe('JobsResource', () => {
 
     describe('subscribeEvent()', () => {
         it('test listening for finished event', async () => {
-            let job = await this.cloudConvert.jobs.create({
+            const job = await this.cloudConvert.jobs.create({
                 tag: 'integration-test-socket',
                 tasks: {
                     'import-it': {

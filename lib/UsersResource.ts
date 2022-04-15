@@ -22,11 +22,11 @@ export default class UsersResource {
         return response.data;
     }
 
-    async subscribeJobEvent(
+    subscribeJobEvent(
         id: string,
         event: JobEvent,
         callback: (event: JobEventData) => void,
-    ): Promise<void> {
+    ): void {
         this.cloudConvert.subscribe(
             `private-user.${id}.jobs`,
             `job.${event}`,
@@ -34,11 +34,11 @@ export default class UsersResource {
         );
     }
 
-    async subscribeTaskEvent(
+    subscribeTaskEvent(
         id: string,
         event: TaskEvent,
         callback: (event: TaskEventData) => void,
-    ): Promise<void> {
+    ): void {
         this.cloudConvert.subscribe(
             `private-user.${id}.tasks`,
             `task.${event}`,
