@@ -17,21 +17,21 @@ describe('SignedUrlResource', () => {
                     'import-it': {
                         operation: 'import/url',
                         url: 'https://some.url',
-                        filename: 'logo.png'
+                        filename: 'logo.png',
                     },
                     'export-it': {
                         operation: 'export/url',
                         input: 'import-it',
-                        inline: true
-                    }
-                }
+                        inline: true,
+                    },
+                },
             };
 
             const url = this.cloudConvert.signedUrls.sign(
                 base,
                 signingSecret,
                 job,
-                'mykey'
+                'mykey',
             );
 
             assert.include(url, base);
@@ -39,7 +39,7 @@ describe('SignedUrlResource', () => {
             assert.include(url, '&cache_key=mykey');
             assert.include(
                 url,
-                '&s=209d54e4454a407de71a07e6e500f45155fecf58a4e53d68329fbf358efcd823'
+                '&s=209d54e4454a407de71a07e6e500f45155fecf58a4e53d68329fbf358efcd823',
             );
         });
     });

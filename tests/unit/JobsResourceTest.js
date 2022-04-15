@@ -11,12 +11,12 @@ describe('JobsResource', () => {
         it('should fetch all jobs', async () => {
             nock('https://api.cloudconvert.com', {
                 reqheaders: {
-                    Authorization: 'Bearer test'
-                }
+                    Authorization: 'Bearer test',
+                },
             })
                 .get('/v2/jobs')
                 .replyWithFile(200, __dirname + '/responses/jobs.json', {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 });
 
             const data = await this.cloudConvert.jobs.all();
@@ -33,11 +33,11 @@ describe('JobsResource', () => {
                 .get('/v2/jobs/cd82535b-0614-4b23-bbba-b24ab0e892f7')
                 .query(true)
                 .replyWithFile(200, __dirname + '/responses/job.json', {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 });
 
             const data = await this.cloudConvert.jobs.get(
-                'cd82535b-0614-4b23-bbba-b24ab0e892f7'
+                'cd82535b-0614-4b23-bbba-b24ab0e892f7',
             );
 
             assert.isObject(data);
@@ -50,15 +50,15 @@ describe('JobsResource', () => {
             nock('https://api.cloudconvert.com')
                 .post('/v2/jobs', {
                     tag: 'test',
-                    tasks: {}
+                    tasks: {},
                 })
                 .replyWithFile(200, __dirname + '/responses/job_created.json', {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 });
 
             const data = await this.cloudConvert.jobs.create({
                 tag: 'test',
-                tasks: {}
+                tasks: {},
             });
 
             assert.isObject(data);
@@ -73,7 +73,7 @@ describe('JobsResource', () => {
                 .reply(204);
 
             await this.cloudConvert.jobs.delete(
-                '2f901289-c9fe-4c89-9c4b-98be526bdfbf'
+                '2f901289-c9fe-4c89-9c4b-98be526bdfbf',
             );
         });
     });

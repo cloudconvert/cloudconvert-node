@@ -12,7 +12,7 @@ describe('UsersResource', () => {
             nock('https://api.cloudconvert.com')
                 .get('/v2/users/me')
                 .replyWithFile(200, __dirname + '/responses/user.json', {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 });
 
             const data = await this.cloudConvert.users.me();

@@ -12,12 +12,12 @@ describe('TasksResource', () => {
         it('should fetch all tasks', async () => {
             nock('https://api.cloudconvert.com', {
                 reqheaders: {
-                    Authorization: 'Bearer test'
-                }
+                    Authorization: 'Bearer test',
+                },
             })
                 .get('/v2/tasks')
                 .replyWithFile(200, __dirname + '/responses/tasks.json', {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 });
 
             const data = await this.cloudConvert.tasks.all();
@@ -33,11 +33,11 @@ describe('TasksResource', () => {
             nock('https://api.cloudconvert.com')
                 .get('/v2/tasks/4c80f1ae-5b3a-43d5-bb58-1a5c4eb4e46b')
                 .replyWithFile(200, __dirname + '/responses/task.json', {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 });
 
             const data = await this.cloudConvert.tasks.get(
-                '4c80f1ae-5b3a-43d5-bb58-1a5c4eb4e46b'
+                '4c80f1ae-5b3a-43d5-bb58-1a5c4eb4e46b',
             );
 
             assert.isObject(data);
@@ -51,18 +51,18 @@ describe('TasksResource', () => {
                 .post('/v2/convert', {
                     name: 'test',
                     url: 'http://invalid.url',
-                    filename: 'test.file'
+                    filename: 'test.file',
                 })
                 .replyWithFile(
                     200,
                     __dirname + '/responses/task_created.json',
-                    { 'Content-Type': 'application/json' }
+                    { 'Content-Type': 'application/json' },
                 );
 
             const data = await this.cloudConvert.tasks.create('convert', {
                 name: 'test',
                 url: 'http://invalid.url',
-                filename: 'test.file'
+                filename: 'test.file',
             });
 
             assert.isObject(data);
@@ -77,7 +77,7 @@ describe('TasksResource', () => {
                 .reply(204);
 
             await this.cloudConvert.tasks.delete(
-                '2f901289-c9fe-4c89-9c4b-98be526bdfbf'
+                '2f901289-c9fe-4c89-9c4b-98be526bdfbf',
             );
         });
     });
@@ -89,23 +89,23 @@ describe('TasksResource', () => {
                 .replyWithFile(
                     200,
                     __dirname + '/responses/upload_task_created.json',
-                    { 'Content-Type': 'application/json' }
+                    { 'Content-Type': 'application/json' },
                 );
 
             const task = await this.cloudConvert.tasks.create('import/upload');
 
             nock('https://upload.sandbox.cloudconvert.com', {
                 reqheaders: {
-                    'Content-Type': /multipart\/form-data/i
-                }
+                    'Content-Type': /multipart\/form-data/i,
+                },
             })
                 .post(
-                    '/storage.de1.cloud.ovh.net/v1/AUTH_b2cffe8f45324c2bba39e8db1aedb58f/cloudconvert-files-sandbox/8aefdb39-34c8-4c7a-9f2e-1751686d615e/?s=jNf7hn3zox1iZfZY6NirNA&e=1559588529'
+                    '/storage.de1.cloud.ovh.net/v1/AUTH_b2cffe8f45324c2bba39e8db1aedb58f/cloudconvert-files-sandbox/8aefdb39-34c8-4c7a-9f2e-1751686d615e/?s=jNf7hn3zox1iZfZY6NirNA&e=1559588529',
                 )
                 .reply(201);
 
             const stream = fs.createReadStream(
-                __dirname + '/../integration/files/input.png'
+                __dirname + '/../integration/files/input.png',
             );
 
             await this.cloudConvert.tasks.upload(task, stream);
