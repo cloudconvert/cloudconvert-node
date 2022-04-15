@@ -6,7 +6,7 @@ export default class SignedUrlResource {
         base: string,
         signingSecret: string,
         job: JobTemplate,
-        cacheKey: string | null
+        cacheKey: string | null,
     ): string {
         const json = JSON.stringify(job);
         const base64 = Buffer.from(json || '').toString('base64');

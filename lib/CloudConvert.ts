@@ -36,8 +36,9 @@ export default class CloudConvert {
                 : 'https://api.cloudconvert.com/v2/',
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
-                'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`
-            }
+                'User-Agent':
+                    `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
+            },
         });
     }
 
@@ -54,7 +55,7 @@ export default class CloudConvert {
         event: string,
         callback:
             | ((event: JobEventData) => void)
-            | ((event: TaskEventData) => void)
+            | ((event: TaskEventData) => void),
     ): void {
         if (!this.socket) {
             this.socket = io.connect(
@@ -62,8 +63,8 @@ export default class CloudConvert {
                     ? 'https://socketio.sandbox.cloudconvert.com'
                     : 'https://socketio.cloudconvert.com',
                 {
-                    transports: ['websocket']
-                }
+                    transports: ['websocket'],
+                },
             );
             this.subscribedChannels = new Map<string, boolean>();
         }
@@ -73,9 +74,9 @@ export default class CloudConvert {
                 channel,
                 auth: {
                     headers: {
-                        Authorization: `Bearer ${this.apiKey}`
-                    }
-                }
+                        Authorization: `Bearer ${this.apiKey}`,
+                    },
+                },
             });
             this.subscribedChannels?.set(channel, true);
         }
@@ -87,7 +88,7 @@ export default class CloudConvert {
                     return;
                 }
                 callback(eventData);
-            }
+            },
         );
     }
 

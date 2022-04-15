@@ -1,14 +1,14 @@
-import CloudConvert from "./CloudConvert";
+import CloudConvert from './CloudConvert';
 import {
     type Operation,
     type Task,
     type TaskEventData,
     type TaskStatus,
-} from "./TasksResource";
+} from './TasksResource';
 
-export type JobEvent = "created" | "updated" | "finished" | "failed";
-export type JobStatus = "processing" | "finished" | "error";
-export type JobTaskStatus = Task["status"] | "queued";
+export type JobEvent = 'created' | 'updated' | 'finished' | 'failed';
+export type JobStatus = 'processing' | 'finished' | 'error';
+export type JobTaskStatus = Task['status'] | 'queued';
 export interface JobEventData {
     job: Job;
 }
@@ -22,7 +22,7 @@ export interface Job {
     ended_at: string | null;
     tasks: JobTask[];
 }
-type NotPresentWhenInsideJob = "job_id" | "status";
+type NotPresentWhenInsideJob = 'job_id' | 'status';
 export interface JobTask extends Omit<Task, NotPresentWhenInsideJob> {
     name: string;
     status: JobTaskStatus;
@@ -45,22 +45,22 @@ export default class JobsResource {
     async wait(id: string): Promise<Job> {
         const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
             baseURL: this.cloudConvert.useSandbox
-                ? "https://sync.api.sandbox.cloudconvert.com/v2/"
-                : "https://sync.api.cloudconvert.com/v2/",
+                ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
+                : 'https://sync.api.cloudconvert.com/v2/',
         });
         return response.data;
     }
 
     async all(
         query: {
-            "filter[status]"?: JobStatus;
-            "filter[tag]"?: string;
+            'filter[status]'?: JobStatus;
+            'filter[tag]'?: string;
             include?: string;
             per_page?: number;
             page?: number;
         } | null = null,
     ): Promise<Job[]> {
-        const response = await this.cloudConvert.axios.get("jobs", {
+        const response = await this.cloudConvert.axios.get('jobs', {
             params: query || {},
         });
         return response.data;
@@ -68,7 +68,7 @@ export default class JobsResource {
 
     // See below for an explanation on how this type signature works
     async create(data: JobTemplate | null = null): Promise<Job> {
-        const response = await this.cloudConvert.axios.post("jobs", data);
+        const response = await this.cloudConvert.axios.post('jobs', data);
         return response.data;
     }
 
@@ -108,7 +108,7 @@ export default class JobsResource {
 // up in many small steps in order to explain what's happening:
 
 // All possible operation strings ("import/url" etc)
-type PossibleOperationStrings = Operation["operation"];
+type PossibleOperationStrings = Operation['operation'];
 // Every argument in the tasks object should be assignable to this (for some operation string O)
 interface NamedOperation<O> {
     operation: O;
@@ -116,7 +116,7 @@ interface NamedOperation<O> {
 // Given an operation string O, get the operation for it
 type OperationByName<O> = Extract<Operation, NamedOperation<O>>;
 // Given an operation string O, get the operation data for it
-type OperationData<O> = OperationByName<O>["data"];
+type OperationData<O> = OperationByName<O>['data'];
 // Add all properties to task that can only occur in tasks that are inside jobs
 interface TaskExtras<O> extends NamedOperation<O> {
     ignore_error?: boolean;

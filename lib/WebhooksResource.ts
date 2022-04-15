@@ -4,7 +4,7 @@ export default class WebhooksResource {
     verify(
         payloadString: string,
         signature: string,
-        signingSecret: string
+        signingSecret: string,
     ): boolean {
         const hmac = crypto.createHmac('sha256', signingSecret);
         const signed = hmac

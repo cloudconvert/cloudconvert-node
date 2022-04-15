@@ -1,10 +1,10 @@
-import FormData, { type Stream } from "form-data";
-import CloudConvert from "./CloudConvert";
-import { type JobTask } from "./JobsResource";
-import axios from "axios";
+import FormData, { type Stream } from 'form-data';
+import CloudConvert from './CloudConvert';
+import { type JobTask } from './JobsResource';
+import axios from 'axios';
 
-export type TaskEvent = "created" | "updated" | "finished" | "failed";
-export type TaskStatus = "waiting" | "processing" | "finished" | "error";
+export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
+export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
 
 export interface TaskEventData {
     task: Task;
@@ -40,7 +40,7 @@ export type ExportOperation =
     | ExportSFTP;
 
 interface ImportUrl {
-    operation: "import/url";
+    operation: 'import/url';
     data: ImportUrlData;
 }
 
@@ -51,7 +51,7 @@ export interface ImportUrlData {
 }
 
 interface ImportUpload {
-    operation: "import/upload";
+    operation: 'import/upload';
     data: ImportUploadData;
 }
 
@@ -60,7 +60,7 @@ export interface ImportUploadData {
 }
 
 interface ImportBase64 {
-    operation: "import/base64";
+    operation: 'import/base64';
     data: ImportBase64Data;
 }
 
@@ -70,7 +70,7 @@ export interface ImportBase64Data {
 }
 
 interface ImportRaw {
-    operation: "import/raw";
+    operation: 'import/raw';
     data: ImportRawData;
 }
 
@@ -80,7 +80,7 @@ export interface ImportRawData {
 }
 
 interface ImportS3 {
-    operation: "import/s3";
+    operation: 'import/s3';
     data: ImportS3Data;
 }
 
@@ -97,7 +97,7 @@ export interface ImportS3Data {
 }
 
 interface ImportAzureBlob {
-    operation: "import/azure/blob";
+    operation: 'import/azure/blob';
     data: ImportAzureBlobData;
 }
 
@@ -112,7 +112,7 @@ export interface ImportAzureBlobData {
 }
 
 interface ImportGoogleCloudStorage {
-    operation: "import/google-cloud-storage";
+    operation: 'import/google-cloud-storage';
     data: ImportGoogleCloudStorageData;
 }
 
@@ -127,7 +127,7 @@ export interface ImportGoogleCloudStorageData {
 }
 
 interface ImportOpenStack {
-    operation: "import/openstack";
+    operation: 'import/openstack';
     data: ImportOpenStackData;
 }
 
@@ -143,7 +143,7 @@ export interface ImportOpenStackData {
 }
 
 interface ImportSFTP {
-    operation: "import/sftp";
+    operation: 'import/sftp';
     data: ImportSFTPData;
 }
 
@@ -159,7 +159,7 @@ export interface ImportSFTPData {
 }
 
 interface TaskConvert {
-    operation: "convert";
+    operation: 'convert';
     data: TaskConvertData;
 }
 
@@ -176,25 +176,25 @@ export interface TaskConvertData {
 }
 
 interface TaskOptimize {
-    operation: "optimize";
+    operation: 'optimize';
     data: TaskOptimizeData;
 }
 
 export interface TaskOptimizeData {
     input: string | string[];
-    input_format?: "jpg" | "png" | "pdf";
+    input_format?: 'jpg' | 'png' | 'pdf';
     engine?: string;
     engine_version?: string;
     filename?: string;
     timeout?: number;
     quality?: number;
-    profile?: "web" | "print" | "archive" | "mrc" | "max";
+    profile?: 'web' | 'print' | 'archive' | 'mrc' | 'max';
 
     [option: string]: any;
 }
 
 interface TaskCapture {
-    operation: "capture-website";
+    operation: 'capture-website';
     data: TaskCaptureData;
 }
 
@@ -217,21 +217,21 @@ export interface TaskCaptureData {
     display_header_footer?: boolean;
     header_template?: string;
     footer_template?: string;
-    wait_until?: "load" | "domcontentloaded" | "networkidle0" | "networkidle2";
+    wait_until?: 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2';
     wait_for_element?: string;
     wait_time?: number;
     headers?: { [header: string]: string };
 }
 
 interface TaskThumbnail {
-    operation: "thumbnail";
+    operation: 'thumbnail';
     data: TaskThumbnailData;
 }
 
 export interface TaskThumbnailData {
     input: string | string[];
     input_format?: string;
-    output_format: "png" | "jpg";
+    output_format: 'png' | 'jpg';
     engine?: string;
     engine_version?: string;
     filename?: string;
@@ -241,7 +241,7 @@ export interface TaskThumbnailData {
 }
 
 interface TaskMetadata {
-    operation: "metadata";
+    operation: 'metadata';
     data: TaskMetadataData;
 }
 
@@ -256,7 +256,7 @@ export interface TaskMetadataData {
 }
 
 interface TaskMetadataWrite {
-    operation: "metadata/write";
+    operation: 'metadata/write';
     data: TaskMetadataWriteData;
 }
 
@@ -273,13 +273,13 @@ export interface TaskMetadataWriteData {
 }
 
 interface TaskMerge {
-    operation: "merge";
+    operation: 'merge';
     data: TaskMergeData;
 }
 
 export interface TaskMergeData {
     input: string | string[];
-    output_format: "pdf";
+    output_format: 'pdf';
     engine?: string;
     engine_version?: string;
     filename?: string;
@@ -287,7 +287,7 @@ export interface TaskMergeData {
 }
 
 interface TaskArchive {
-    operation: "archive";
+    operation: 'archive';
     data: TaskArchiveData;
 }
 
@@ -301,7 +301,7 @@ export interface TaskArchiveData {
 }
 
 interface TaskCommand {
-    operation: "command";
+    operation: 'command';
     data: TaskCommandData;
 }
 
@@ -314,18 +314,18 @@ interface TaskCommandBaseData {
 }
 
 interface TaskCommandFfmpegData extends TaskCommandBaseData {
-    engine: "ffmpeg";
-    command: "ffmpeg" | "ffprobe";
+    engine: 'ffmpeg';
+    command: 'ffmpeg' | 'ffprobe';
 }
 
 interface TaskCommandGraphicsmagickData extends TaskCommandBaseData {
-    engine: "graphicsmagick";
-    command: "gm";
+    engine: 'graphicsmagick';
+    command: 'gm';
 }
 
 interface TaskCommandImagemagickData extends TaskCommandBaseData {
-    engine: "imagemagick";
-    command: "convert" | "identify";
+    engine: 'imagemagick';
+    command: 'convert' | 'identify';
 }
 
 export type TaskCommandData =
@@ -334,7 +334,7 @@ export type TaskCommandData =
     | TaskCommandImagemagickData;
 
 interface ExportUrl {
-    operation: "export/url";
+    operation: 'export/url';
     data: ExportUrlData;
 }
 
@@ -345,7 +345,7 @@ export interface ExportUrlData {
 }
 
 interface ExportS3 {
-    operation: "export/s3";
+    operation: 'export/s3';
     data: ExportS3Data;
 }
 
@@ -360,19 +360,19 @@ export interface ExportS3Data {
     secret_access_key: string;
     session_token?: string;
     acl?:
-        | "private"
-        | "public-read"
-        | "public-read-write"
-        | "authenticated-read"
-        | "bucket-owner-read"
-        | "bucket-owner-full-control";
+        | 'private'
+        | 'public-read'
+        | 'public-read-write'
+        | 'authenticated-read'
+        | 'bucket-owner-read'
+        | 'bucket-owner-full-control';
     cache_control?: string;
     metadata?: Record<string, unknown>;
     server_side_encryption?: string;
 }
 
 interface ExportAzureBlob {
-    operation: "export/azure/blob";
+    operation: 'export/azure/blob';
     data: ExportAzureBlobData;
 }
 
@@ -387,7 +387,7 @@ export interface ExportAzureBlobData {
 }
 
 interface ExportGoogleCloudStorage {
-    operation: "export/google-cloud-storage";
+    operation: 'export/google-cloud-storage';
     data: ExportGoogleCloudStorageData;
 }
 
@@ -402,7 +402,7 @@ export interface ExportGoogleCloudStorageData {
 }
 
 interface ExportOpenStack {
-    operation: "export/openstack";
+    operation: 'export/openstack';
     data: ExportOpenStackData;
 }
 
@@ -418,7 +418,7 @@ export interface ExportOpenStackData {
 }
 
 interface ExportSFTP {
-    operation: "export/sftp";
+    operation: 'export/sftp';
     data: ExportSFTPData;
 }
 
@@ -436,7 +436,7 @@ export interface ExportSFTPData {
 export interface Task {
     id: string;
     job_id: string;
-    operation: Operation["operation"];
+    operation: Operation['operation'];
     status: TaskStatus;
     message: string | null;
     code: string | null;
@@ -479,8 +479,8 @@ export default class TasksResource {
     async wait(id: string): Promise<Task> {
         const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
             baseURL: this.cloudConvert.useSandbox
-                ? "https://sync.api.sandbox.cloudconvert.com/v2/"
-                : "https://sync.api.cloudconvert.com/v2/",
+                ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
+                : 'https://sync.api.cloudconvert.com/v2/',
         });
         return response.data;
     }
@@ -494,22 +494,22 @@ export default class TasksResource {
 
     async all(
         query: {
-            "filter[job_id]"?: string;
-            "filter[status]"?: TaskStatus;
-            "filter[operation]"?: Operation["operation"];
+            'filter[job_id]'?: string;
+            'filter[status]'?: TaskStatus;
+            'filter[operation]'?: Operation['operation'];
             per_page?: number;
             page?: number;
         } | null = null,
     ): Promise<Task[]> {
-        const response = await this.cloudConvert.axios.get("tasks", {
+        const response = await this.cloudConvert.axios.get('tasks', {
             params: query || {},
         });
         return response.data;
     }
 
-    async create<O extends Operation["operation"]>(
+    async create<O extends Operation['operation']>(
         operation: O,
-        data: Extract<Operation, { operation: O }>["data"] | null = null,
+        data: Extract<Operation, { operation: O }>['data'] | null = null,
     ): Promise<Task> {
         const response = await this.cloudConvert.axios.post<any>(
             operation,
@@ -527,12 +527,12 @@ export default class TasksResource {
         stream: Stream,
         filename: string | null = null,
     ): Promise<any> {
-        if (task.operation !== "import/upload") {
-            throw new Error("The task operation is not import/upload");
+        if (task.operation !== 'import/upload') {
+            throw new Error('The task operation is not import/upload');
         }
 
-        if (task.status !== "waiting" || !task.result || !task.result.form) {
-            throw new Error("The task is not ready for uploading");
+        if (task.status !== 'waiting' || !task.result || !task.result.form) {
+            throw new Error('The task is not ready for uploading');
         }
 
         const formData = new FormData();
@@ -545,7 +545,7 @@ export default class TasksResource {
         if (filename) {
             fileOptions = { filename };
         }
-        formData.append("file", stream, fileOptions);
+        formData.append('file', stream, fileOptions);
 
         return await axios.post(task.result.form.url, formData, {
             maxContentLength: Infinity,
