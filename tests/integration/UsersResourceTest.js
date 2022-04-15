@@ -18,7 +18,7 @@ describe('UsersResource', () => {
                 'id',
                 'username',
                 'email',
-                'credits'
+                'credits',
             ]);
         });
     });

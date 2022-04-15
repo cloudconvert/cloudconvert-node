@@ -20,21 +20,21 @@ describe('JobsResource', () => {
                 tag: 'integration-test-upload-download',
                 tasks: {
                     'import-it': {
-                        operation: 'import/upload'
+                        operation: 'import/upload',
                     },
                     'export-it': {
                         input: 'import-it',
-                        operation: 'export/url'
-                    }
-                }
+                        operation: 'export/url',
+                    },
+                },
             });
 
             const uploadTask = job.tasks.filter(
-                task => task.name === 'import-it'
+                (task) => task.name === 'import-it',
             )[0];
 
             const stream = fs.createReadStream(
-                __dirname + '/../integration/files/input.png'
+                __dirname + '/../integration/files/input.png',
             );
 
             await this.cloudConvert.tasks.upload(uploadTask, stream);
@@ -46,7 +46,7 @@ describe('JobsResource', () => {
             // download export file
 
             const exportTask = job.tasks.filter(
-                task => task.name === 'export-it'
+                (task) => task.name === 'export-it',
             )[0];
             const file = exportTask.result.files[0];
 
@@ -55,7 +55,7 @@ describe('JobsResource', () => {
             const writer = fs.createWriteStream(this.tmpPath);
 
             const response = await axios(file.url, {
-                responseType: 'stream'
+                responseType: 'stream',
             });
 
             response.data.pipe(writer);
@@ -84,30 +84,30 @@ describe('JobsResource', () => {
                 tag: 'integration-test-socket',
                 tasks: {
                     'import-it': {
-                        operation: 'import/upload'
+                        operation: 'import/upload',
                     },
                     'export-it': {
                         input: 'import-it',
-                        operation: 'export/url'
-                    }
-                }
+                        operation: 'export/url',
+                    },
+                },
             });
 
             const uploadTask = job.tasks.filter(
-                task => task.name === 'import-it'
+                (task) => task.name === 'import-it',
             )[0];
 
             const stream = fs.createReadStream(
-                __dirname + '/../integration/files/input.png'
+                __dirname + '/../integration/files/input.png',
             );
 
             this.cloudConvert.tasks.upload(uploadTask, stream);
 
-            const event = await new Promise(resolve => {
+            const event = await new Promise((resolve) => {
                 this.cloudConvert.jobs.subscribeEvent(
                     job.id,
                     'finished',
-                    resolve
+                    resolve,
                 );
             });
 

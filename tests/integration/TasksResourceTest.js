@@ -11,11 +11,11 @@ describe('TasksResource', () => {
     describe('upload()', () => {
         it('uploads input.png', async () => {
             let task = await this.cloudConvert.tasks.create('import/upload', {
-                name: 'upload-test'
+                name: 'upload-test',
             });
 
             const stream = fs.createReadStream(
-                __dirname + '/../integration/files/input.png'
+                __dirname + '/../integration/files/input.png',
             );
 
             await this.cloudConvert.tasks.upload(task, stream);
