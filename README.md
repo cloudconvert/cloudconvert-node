@@ -33,19 +33,19 @@ let job = await cloudConvert.jobs.create({
     tasks: {
         'import-my-file': {
             operation: 'import/url',
-            url: 'https://my-url'
+            url: 'https://my-url',
         },
         'convert-my-file': {
             operation: 'convert',
             input: 'import-my-file',
             output_format: 'pdf',
-            some_other_option: 'value'
+            some_other_option: 'value',
         },
         'export-my-file': {
             operation: 'export/url',
-            input: 'convert-my-file'
-        }
-    }
+            input: 'convert-my-file',
+        },
+    },
 });
 ```
 
@@ -59,7 +59,7 @@ CloudConvert can generate public URLs for using `export/url` tasks. You can use 
 job = await cloudConvert.jobs.wait(job.id); // Wait for job completion
 
 const exportTask = job.tasks.filter(
-    task => task.operation === 'export/url' && task.status === 'finished'
+    (task) => task.operation === 'export/url' && task.status === 'finished',
 )[0];
 const file = exportTask.result.files[0];
 
@@ -83,13 +83,14 @@ Uploads to CloudConvert are done via `import/upload` tasks (see the [docs](https
 const job = await cloudConvert.jobs.create({
     tasks: {
         'upload-my-file': {
-            operation: 'import/upload'
-        }
+            operation: 'import/upload',
+        },
         // ...
-    }
+    },
 });
 
-const uploadTask = job.tasks.filter(task => task.name === 'upload-my-file')[0];
+const uploadTask =
+    job.tasks.filter((task) => task.name === 'upload-my-file')[0];
 
 const inputFile = fs.createReadStream('./file.pdf');
 
@@ -136,7 +137,7 @@ const signingSecret = '...'; // You can find it in your webhook settings.
 const isValid = cloudConvert.webhooks.verify(
     payloadString,
     signature,
-    signingSecret
+    signingSecret,
 ); // returns true or false
 ```
 
@@ -154,21 +155,21 @@ const job = {
         'import-it': {
             operation: 'import/url',
             url: 'https://some.url',
-            filename: 'logo.png'
+            filename: 'logo.png',
         },
         'export-it': {
             operation: 'export/url',
             input: 'import-it',
-            inline: true
-        }
-    }
+            inline: true,
+        },
+    },
 };
 
 const url = cloudConvert.signedUrls.sign(
     signedUrlBase,
     signingSecret,
     job,
-    cacheKey
+    cacheKey,
 ); // returns the generated URL
 ```
 
@@ -233,5 +234,5 @@ and even auto-fix as many things as possible by running
 
 ## Resources
 
--   [API v2 Documentation](https://cloudconvert.com/api/v2)
--   [CloudConvert Blog](https://cloudconvert.com/blog)
+- [API v2 Documentation](https://cloudconvert.com/api/v2)
+- [CloudConvert Blog](https://cloudconvert.com/blog)
