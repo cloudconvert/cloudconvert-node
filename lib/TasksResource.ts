@@ -523,7 +523,7 @@ export default class TasksResource {
 
     async upload(
         task: Task | JobTask,
-        stream: Stream,
+        file: string | Blob,
         filename: string | null = null,
     ): Promise<any> {
         if (task.operation !== 'import/upload') {
@@ -540,7 +540,7 @@ export default class TasksResource {
             formData.append(parameter, task.result.form.parameters[parameter]);
         }
 
-        formData.append('file', stream, filename ?? undefined);
+        formData.append('file', file, filename ?? undefined);
 
         return await fetch(task.result.form.url, {
             method: 'POST',

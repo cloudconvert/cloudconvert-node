@@ -30,7 +30,7 @@ export default class CloudConvert {
         this.jobs = new JobsResource(this);
         this.users = new UsersResource(this);
         this.webhooks = new WebhooksResource();
-        this.signedUrls = new SignedUrlResource(this);
+        this.signedUrls = new SignedUrlResource();
     }
 
     async callApi(path: string, config?: Partial<ApiCallParams>) {
