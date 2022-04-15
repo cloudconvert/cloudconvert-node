@@ -1,0 +1,6 @@
+{
+    "fmt": {
+        "options": { "indentWidth": 4, "proseWrap": "preserve" },
+        "files": { "exclude": ["./node_modules/"] }
+    }
+}
