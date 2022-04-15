@@ -1,7 +1,5 @@
-import CloudConvert from '../..//lib/CloudConvert.js';
-import { assert } from 'chai';
-import * as fs from 'fs';
-import apiKey from './ApiKey';
+import CloudConvert from '../../lib/CloudConvert.ts';
+import apiKey from './ApiKey.test.ts';
 
 describe('TasksResource', () => {
     beforeEach(() => {

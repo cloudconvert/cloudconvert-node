@@ -1,6 +1,5 @@
-import CloudConvert from '../../built/lib/CloudConvert.js';
-import apiKey from './ApiKey';
-import { assert } from 'chai';
+import CloudConvert from '../../lib/CloudConvert.ts';
+import apiKey from './ApiKey.test.ts';
 
 describe('UsersResource', () => {
     beforeEach(() => {

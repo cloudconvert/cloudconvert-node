@@ -1,9 +1,5 @@
-import CloudConvert from '../../built/lib/CloudConvert.js';
-import { assert } from 'chai';
-import * as fs from 'fs';
-import * as os from 'os';
-import apiKey from './ApiKey';
-import axios from 'axios';
+import CloudConvert from '../../lib/CloudConvert.ts';
+import apiKey from './ApiKey.test.ts';
 
 describe('JobsResource', () => {
     beforeEach(() => {
