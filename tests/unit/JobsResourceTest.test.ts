@@ -1,6 +1,4 @@
-import CloudConvert from '../../built/lib/CloudConvert.js';
-import { assert } from 'chai';
-import nock from 'nock';
+import CloudConvert from '../../lib/CloudConvert.ts';
 
 describe('JobsResource', () => {
     beforeEach(() => {

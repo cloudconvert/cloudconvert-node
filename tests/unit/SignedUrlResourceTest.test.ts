@@ -1,5 +1,4 @@
-import CloudConvert from '../../built/lib/CloudConvert.js';
-import { assert } from 'chai';
+import CloudConvert from '../../lib/CloudConvert.ts';
 
 describe('SignedUrlResource', () => {
     beforeEach(() => {

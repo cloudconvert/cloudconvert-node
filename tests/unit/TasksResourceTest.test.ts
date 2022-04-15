@@ -1,7 +1,4 @@
-import CloudConvert from '../../built/lib/CloudConvert.js';
-import { assert } from 'chai';
-import * as fs from 'fs';
-import nock from 'nock';
+import CloudConvert from '../../lib/CloudConvert.ts';
 
 describe('TasksResource', () => {
     beforeEach(() => {
