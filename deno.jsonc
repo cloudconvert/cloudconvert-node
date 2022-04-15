@@ -8,7 +8,7 @@
         "files": { "exclude": ["./node_modules/"] }
     },
     "tasks": {
-        "check": "deno cache lib/mod.ts",
+        "check": "deno cache lib/mod.ts --unstable",
         "build": "deno run -A build.ts",
         "test": "deno test tests/unit",
         "test-integration": "deno test tests/integration"
