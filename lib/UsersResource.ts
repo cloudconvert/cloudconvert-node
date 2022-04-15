@@ -1,6 +1,6 @@
-import CloudConvert from './CloudConvert';
-import { type JobEvent, type JobEventData } from './JobsResource';
-import { type TaskEvent, type TaskEventData } from './TasksResource';
+import CloudConvert from "./CloudConvert";
+import { type JobEvent, type JobEventData } from "./JobsResource";
+import { type TaskEvent, type TaskEventData } from "./TasksResource";
 
 export interface User {
     id: string;
@@ -18,31 +18,31 @@ export default class UsersResource {
     }
 
     async me(): Promise<User> {
-        const response = await this.cloudConvert.axios.get('users/me');
-        return response.data.data;
+        const response = await this.cloudConvert.axios.get("users/me");
+        return response.data;
     }
 
     async subscribeJobEvent(
         id: string,
         event: JobEvent,
-        callback: (event: JobEventData) => void
+        callback: (event: JobEventData) => void,
     ): Promise<void> {
         this.cloudConvert.subscribe(
             `private-user.${id}.jobs`,
             `job.${event}`,
-            callback
+            callback,
         );
     }
 
     async subscribeTaskEvent(
         id: string,
         event: TaskEvent,
-        callback: (event: TaskEventData) => void
+        callback: (event: TaskEventData) => void,
     ): Promise<void> {
         this.cloudConvert.subscribe(
             `private-user.${id}.tasks`,
             `task.${event}`,
-            callback
+            callback,
         );
     }
 }
