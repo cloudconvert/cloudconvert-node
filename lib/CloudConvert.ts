@@ -1,53 +1,55 @@
-import axios, { type AxiosInstance } from 'axios';
-import io from 'socket.io-client';
-import JobsResource, { type JobEventData } from './JobsResource';
-import TasksResource, { type TaskEventData } from './TasksResource';
-import UsersResource from './UsersResource';
-import WebhooksResource from './WebhooksResource';
-import { version } from '../package.json';
-import SignedUrlResource from './SignedUrlResource';
+import * as io from 'https://esm.sh/socket.io-client@2.4.0';
+import JobsResource, { JobEventData } from './JobsResource.ts';
+import TasksResource, { TaskEventData } from './TasksResource.ts';
+import UsersResource from './UsersResource.ts';
+import WebhooksResource from './WebhooksResource.ts';
+import { version } from './version.ts';
+import SignedUrlResource from './SignedUrlResource.ts';
+
+interface ApiCallParams {
+    method: string;
+    baseURL: string;
+    params: Record<string, unknown> | null;
+}
 
 export default class CloudConvert {
-    private socket: SocketIOClient.Socket | undefined;
+    private socket?: any;
     private subscribedChannels: Map<string, boolean> | undefined;
 
-    public readonly apiKey: string;
-    public readonly useSandbox: boolean;
+    public tasks: TasksResource;
+    public jobs: JobsResource;
+    public users: UsersResource;
+    public webhooks: WebhooksResource;
+    public signedUrls: SignedUrlResource;
 
-    public axios!: AxiosInstance;
-    public tasks!: TasksResource;
-    public jobs!: JobsResource;
-    public users!: UsersResource;
-    public webhooks!: WebhooksResource;
-    public signedUrls!: SignedUrlResource;
-
-    constructor(apiKey: string, useSandbox = false) {
-        this.apiKey = apiKey;
-        this.useSandbox = useSandbox;
-
-        this.createAxiosInstance();
-        this.createResources();
-    }
-
-    createAxiosInstance(): void {
-        this.axios = axios.create({
-            baseURL: this.useSandbox
-                ? 'https://api.sandbox.cloudconvert.com/v2/'
-                : 'https://api.cloudconvert.com/v2/',
-            headers: {
-                Authorization: `Bearer ${this.apiKey}`,
-                'User-Agent':
-                    `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
-            },
-        });
-    }
-
-    createResources(): void {
+    constructor(
+        public readonly apiKey: string,
+        public readonly useSandbox = false,
+    ) {
         this.tasks = new TasksResource(this);
         this.jobs = new JobsResource(this);
         this.users = new UsersResource(this);
         this.webhooks = new WebhooksResource();
-        this.signedUrls = new SignedUrlResource();
+        this.signedUrls = new SignedUrlResource(this);
+    }
+
+    async callApi(path: string, config?: Partial<ApiCallParams>) {
+        const baseUrl = config?.baseURL ??
+            (this.useSandbox
+                ? 'https://api.sandbox.cloudconvert.com/v2/'
+                : 'https://api.cloudconvert.com/v2/');
+        const url = baseUrl + path;
+        const method = config?.method;
+        const headers = {
+            Authorization: `Bearer ${this.apiKey}`,
+            'User-Agent':
+                `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
+        };
+        const body = config?.params == null
+            ? undefined
+            : JSON.stringify(config?.params);
+        const response = await fetch(url, { method, headers, body });
+        return await response.json();
     }
 
     subscribe(

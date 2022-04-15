@@ -1,10 +1,10 @@
-import CloudConvert from './CloudConvert';
+import CloudConvert from './CloudConvert.ts';
 import {
     type Operation,
     type Task,
     type TaskEventData,
     type TaskStatus,
-} from './TasksResource';
+} from './TasksResource.ts';
 
 export type JobEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type JobStatus = 'processing' | 'finished' | 'error';
@@ -36,14 +36,14 @@ export default class JobsResource {
     }
 
     async get(id: string, query = null): Promise<Job> {
-        const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
+        const response = await this.cloudConvert.callApi(`jobs/${id}`, {
             params: query || {},
         });
         return response.data;
     }
 
     async wait(id: string): Promise<Job> {
-        const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
+        const response = await this.cloudConvert.callApi(`jobs/${id}`, {
             baseURL: this.cloudConvert.useSandbox
                 ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
                 : 'https://sync.api.cloudconvert.com/v2/',
@@ -60,7 +60,7 @@ export default class JobsResource {
             page?: number;
         } | null = null,
     ): Promise<Job[]> {
-        const response = await this.cloudConvert.axios.get('jobs', {
+        const response = await this.cloudConvert.callApi('jobs', {
             params: query || {},
         });
         return response.data;
@@ -68,12 +68,15 @@ export default class JobsResource {
 
     // See below for an explanation on how this type signature works
     async create(data: JobTemplate | null = null): Promise<Job> {
-        const response = await this.cloudConvert.axios.post('jobs', data);
+        const response = await this.cloudConvert.callApi('jobs', {
+            method: 'POST',
+            params: { ...data },
+        });
         return response.data;
     }
 
     async delete(id: string): Promise<void> {
-        await this.cloudConvert.axios.delete(`jobs/${id}`);
+        await this.cloudConvert.callApi(`jobs/${id}`, { method: 'DELETE' });
     }
 
     async subscribeEvent(

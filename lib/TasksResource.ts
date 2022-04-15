@@ -1,7 +1,5 @@
-import FormData, { type Stream } from 'form-data';
-import CloudConvert from './CloudConvert';
-import { type JobTask } from './JobsResource';
-import axios from 'axios';
+import CloudConvert from './CloudConvert.ts';
+import { type JobTask } from './JobsResource.ts';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
@@ -470,26 +468,27 @@ export default class TasksResource {
         id: string,
         query: { include: string } | null = null,
     ): Promise<Task> {
-        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
+        const response = await this.cloudConvert.callApi(`tasks/${id}`, {
             params: query || {},
         });
-        return response.data;
+        return response.data.data;
     }
 
     async wait(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
+        const response = await this.cloudConvert.callApi(`tasks/${id}`, {
             baseURL: this.cloudConvert.useSandbox
                 ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
                 : 'https://sync.api.cloudconvert.com/v2/',
         });
-        return response.data;
+        return response.data.data;
     }
 
     async cancel(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.post(
+        const response = await this.cloudConvert.callApi(
             `tasks/${id}/cancel`,
+            { method: 'POST' },
         );
-        return response.data;
+        return response.data.data;
     }
 
     async all(
@@ -501,7 +500,7 @@ export default class TasksResource {
             page?: number;
         } | null = null,
     ): Promise<Task[]> {
-        const response = await this.cloudConvert.axios.get('tasks', {
+        const response = await this.cloudConvert.callApi('tasks', {
             params: query || {},
         });
         return response.data;
@@ -511,15 +510,15 @@ export default class TasksResource {
         operation: O,
         data: Extract<Operation, { operation: O }>['data'] | null = null,
     ): Promise<Task> {
-        const response = await this.cloudConvert.axios.post<any>(
+        const response = await this.cloudConvert.callApi(
             operation,
-            data,
+            { method: 'POST', params: { ...data } },
         );
         return response.data;
     }
 
     async delete(id: string): Promise<void> {
-        await this.cloudConvert.axios.delete(`tasks/${id}`);
+        await this.cloudConvert.callApi(`tasks/${id}`, { method: 'DELETE' });
     }
 
     async upload(
@@ -541,18 +540,11 @@ export default class TasksResource {
             formData.append(parameter, task.result.form.parameters[parameter]);
         }
 
-        let fileOptions = {};
-        if (filename) {
-            fileOptions = { filename };
-        }
-        formData.append('file', stream, fileOptions);
+        formData.append('file', stream, filename ?? undefined);
 
-        return await axios.post(task.result.form.url, formData, {
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity,
-            headers: {
-                ...formData.getHeaders(),
-            },
+        return await fetch(task.result.form.url, {
+            method: 'POST',
+            body: formData,
         });
     }
 

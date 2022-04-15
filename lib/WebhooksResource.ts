@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import { hmac } from 'https://deno.land/x/hmac@v2.0.1/mod.ts';
 
 export default class WebhooksResource {
     verify(
@@ -6,11 +6,13 @@ export default class WebhooksResource {
         signature: string,
         signingSecret: string,
     ): boolean {
-        const hmac = crypto.createHmac('sha256', signingSecret);
-        const signed = hmac
-            .update(Buffer.from(payloadString, 'utf-8'))
-            .digest('hex');
-
+        const signed = hmac(
+            'sha256',
+            signingSecret,
+            payloadString,
+            'utf8',
+            'hex',
+        );
         return signature === signed;
     }
 }
