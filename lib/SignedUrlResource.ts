@@ -1,5 +1,4 @@
-import { encode } from 'https://deno.land/std@0.134.0/encoding/base64.ts';
-import { hmac } from 'https://deno.land/x/hmac@v2.0.1/mod.ts';
+import * as crypto from 'https://deno.land/std@0.155.0/node/crypto.ts';
 import { type JobTemplate } from './JobsResource.ts';
 
 export default class SignedUrlResource {
@@ -10,7 +9,7 @@ export default class SignedUrlResource {
         cacheKey: string | null,
     ): string {
         const json = JSON.stringify(job);
-        const base64 = encode(json);
+        const base64 = btoa(json || '');
         const base64UrlSafe = base64
             .replace('+', '-')
             .replace('/', '_')
@@ -22,7 +21,8 @@ export default class SignedUrlResource {
             url += `&cache_key=${cacheKey}`;
         }
 
-        const signature = hmac('sha256', signingSecret, url, 'utf8', 'hex');
+        const hmac = crypto.createHmac('sha256', signingSecret);
+        const signature = hmac.update(btoa(url)).digest('hex');
 
         url += `&s=${signature}`;
 
