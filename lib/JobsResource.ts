@@ -1,5 +1,6 @@
 import CloudConvert from './CloudConvert';
 import {
+    type FileResult,
     type Operation,
     type Task,
     type TaskEventData,
@@ -98,6 +99,10 @@ export default class JobsResource {
             `task.${event}`,
             callback
         );
+    }
+
+    getExportUrls(job: Job): FileResult[] {
+        return job.tasks.flatMap(task => task.result?.files ?? []);
     }
 }
 
