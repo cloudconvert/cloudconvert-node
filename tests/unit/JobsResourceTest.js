@@ -77,4 +77,35 @@ describe('JobsResource', () => {
             );
         });
     });
+
+    describe('getExportUrls()', () => {
+        it('should extract the export URLs', async () => {
+            nock('https://api.cloudconvert.com')
+                .get('/v2/jobs/b2e4eb2b-a744-4da2-97cd-776d393532a8')
+                .query(true)
+                .replyWithFile(
+                    200,
+                    __dirname + '/responses/job_finished.json',
+                    {
+                        'Content-Type': 'application/json'
+                    }
+                );
+
+            const job = await this.cloudConvert.jobs.get(
+                'b2e4eb2b-a744-4da2-97cd-776d393532a8',
+                { include: 'tasks' }
+            );
+
+            const exportUrls = this.cloudConvert.jobs.getExportUrls(job);
+
+            assert.isArray(exportUrls);
+            assert.lengthOf(exportUrls, 1);
+
+            assert.equal(exportUrls[0].filename, 'original.png');
+            assert.match(
+                exportUrls[0].url,
+                new RegExp('^https://storage.cloudconvert.com/')
+            );
+        });
+    });
 });

@@ -102,7 +102,13 @@ export default class JobsResource {
     }
 
     getExportUrls(job: Job): FileResult[] {
-        return job.tasks.flatMap(task => task.result?.files ?? []);
+        return job.tasks
+            .filter(
+                task =>
+                    task.operation === 'export/url' &&
+                    task.status === 'finished'
+            )
+            .flatMap(task => task.result?.files ?? []);
     }
 }
 

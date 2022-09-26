@@ -44,11 +44,7 @@ describe('JobsResource', () => {
             assert.equal(job.status, 'finished');
 
             // download export file
-
-            const exportTask = job.tasks.filter(
-                task => task.name === 'export-it'
-            )[0];
-            const file = exportTask.result.files[0];
+            const file = this.cloudConvert.jobs.getExportUrls(job)[0];
 
             assert.equal(file.filename, 'input.png');
 
