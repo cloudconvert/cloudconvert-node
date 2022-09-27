@@ -9,6 +9,9 @@ export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
 export interface TaskEventData {
     task: Task;
 }
+export interface JobTaskEventData {
+    task: JobTask;
+}
 
 export type Operation = ImportOperation | TaskOperation | ExportOperation;
 export type ImportOperation =
