@@ -1,7 +1,10 @@
 import axios, { type AxiosInstance } from 'axios';
 import io from 'socket.io-client';
 import JobsResource, { type JobEventData } from './JobsResource';
-import TasksResource, { type TaskEventData } from './TasksResource';
+import TasksResource, {
+    type JobTaskEventData,
+    type TaskEventData
+} from './TasksResource';
 import UsersResource from './UsersResource';
 import WebhooksResource from './WebhooksResource';
 import { version } from '../package.json';
@@ -55,6 +58,7 @@ export default class CloudConvert {
         callback:
             | ((event: JobEventData) => void)
             | ((event: TaskEventData) => void)
+            | ((event: JobTaskEventData) => void)
     ): void {
         if (!this.socket) {
             this.socket = io.connect(
