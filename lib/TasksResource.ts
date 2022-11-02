@@ -460,6 +460,7 @@ export interface FileResult {
     dir?: string;
     filename: string;
     url?: string;
+    size?: number;
 }
 
 export default class TasksResource {
