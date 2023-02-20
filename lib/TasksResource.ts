@@ -27,6 +27,7 @@ export type ImportOperation =
 export type TaskOperation =
     | TaskConvert
     | TaskOptimize
+    | TaskWaterMark
     | TaskCapture
     | TaskThumbnail
     | TaskMerge
@@ -192,6 +193,73 @@ export interface TaskOptimizeData {
     timeout?: number;
     quality?: number;
     profile?: 'web' | 'print' | 'archive' | 'mrc' | 'max';
+
+    [option: string]: any;
+}
+
+interface TaskWaterMark {
+    operation: 'watermark';
+    data: TaskWaterMarkData;
+}
+
+export interface TaskWaterMarkData {
+    input?: string | string[];
+    input_format?: string;
+    pages?: string;
+    layer?: 'above' | 'below';
+    text?: string;
+    font_size?: number;
+    font_width_percent?: number;
+    font_color?: string;
+    font_name?:
+        | 'Andale Mono'
+        | 'Arial'
+        | 'Arial Black'
+        | 'Arial Bold'
+        | 'Arial Bold Italic'
+        | 'Arial Italic'
+        | 'Courier New'
+        | 'Courier New Bold'
+        | 'Courier New Bold Italic'
+        | 'Courier New Italic'
+        | 'Georgia'
+        | 'Georgia Bold'
+        | 'Georgia Bold Italic'
+        | 'Georgia Italic'
+        | 'Helvetica'
+        | 'Helvetica Bold'
+        | 'Helvetica BoldOblique'
+        | 'Helvetica Narrow Bold'
+        | 'Helvetica Narrow BoldOblique'
+        | 'Helvetica Oblique'
+        | 'Impact'
+        | 'Times New Roman'
+        | 'Times New Roman Bold'
+        | 'Times New Roman Bold Italic'
+        | 'Times New Roman Italic'
+        | 'Trebuchet MS'
+        | 'Trebuchet MS Bold'
+        | 'Trebuchet MS Bold Italic'
+        | 'Trebuchet MS Italic'
+        | 'Verdana'
+        | 'Verdana Bold'
+        | 'Verdana Bold Italic'
+        | 'Verdana Italic';
+    font_align?: 'left' | 'center' | 'right';
+    image?: string;
+    image_width?: number;
+    image_height?: number;
+    image_width_percent?: number;
+    position_vertical?: 'top' | 'center' | 'bottom';
+    position_horizontal?: 'left' | 'center' | 'right';
+    margin_vertical?: number;
+    margin_horizontal?: number;
+    opacity?: number;
+    rotation?: number;
+    filename?: string;
+    engine?: string;
+    engine_version?: string;
+    timeout?: number;
 
     [option: string]: any;
 }
