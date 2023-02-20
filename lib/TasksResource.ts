@@ -302,10 +302,15 @@ interface TaskThumbnail {
 export interface TaskThumbnailData {
     input: string | string[];
     input_format?: string;
-    output_format: 'png' | 'jpg';
+    output_format: 'png' | 'webp' | 'jpg';
+    width?: number;
+    height?: number;
+    fit?: 'max' | 'crop' | 'scale';
+    count?: number;
+    timestamp?: string;
+    filename?: string;
     engine?: string;
     engine_version?: string;
-    filename?: string;
     timeout?: number;
 
     [option: string]: any;
@@ -440,6 +445,7 @@ export interface ExportS3Data {
     cache_control?: string;
     metadata?: Record<string, unknown>;
     server_side_encryption?: string;
+    tagging?: Record<string, string>;
 }
 
 interface ExportAzureBlob {
