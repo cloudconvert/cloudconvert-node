@@ -69,7 +69,9 @@ export default class JobsResource {
 
     // See below for an explanation on how this type signature works
     async create(data: JobTemplate | null = null): Promise<Job> {
-        const response = await this.cloudConvert.axios.post('jobs', data);
+        const response = await this.cloudConvert.axios.post('jobs', data, {
+            maxBodyLength: Infinity
+        });
         return response.data.data;
     }
 
