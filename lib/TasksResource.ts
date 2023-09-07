@@ -2,6 +2,7 @@ import FormData, { type Stream } from 'form-data';
 import CloudConvert from './CloudConvert';
 import { type JobTask } from './JobsResource';
 import axios from 'axios';
+import { ReadStream, statSync } from 'fs';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
@@ -9,6 +10,7 @@ export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
 export interface TaskEventData {
     task: Task;
 }
+
 export interface JobTaskEventData {
     task: JobTask;
 }
@@ -603,7 +605,8 @@ export default class TasksResource {
     async upload(
         task: Task | JobTask,
         stream: Stream,
-        filename: string | null = null
+        filename: string | null = null,
+        size: number | null = null
     ): Promise<any> {
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');
@@ -619,9 +622,15 @@ export default class TasksResource {
             formData.append(parameter, task.result.form.parameters[parameter]);
         }
 
-        let fileOptions = {};
+        const fileOptions: { filename?: string; knownLength?: number } = {};
+
         if (filename) {
-            fileOptions = { filename };
+            fileOptions.filename = filename;
+        }
+        if (size) {
+            fileOptions.knownLength = size;
+        } else if (stream instanceof ReadStream) {
+            fileOptions.knownLength = statSync(stream.path).size;
         }
         formData.append('file', stream, fileOptions);
 
@@ -629,6 +638,9 @@ export default class TasksResource {
             maxContentLength: Infinity,
             maxBodyLength: Infinity,
             headers: {
+                ...(formData.hasKnownLength()
+                    ? { 'Content-Length': formData.getLengthSync() }
+                    : {}),
                 ...formData.getHeaders()
             }
         });
