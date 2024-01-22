@@ -47,7 +47,11 @@ export default class JobsResource {
         const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
             baseURL: this.cloudConvert.useSandbox
                 ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
-                : 'https://sync.api.cloudconvert.com/v2/'
+                : `https://${
+                      this.cloudConvert.region
+                          ? this.cloudConvert.region + '.'
+                          : ''
+                  }sync.api.cloudconvert.com/v2/`
         });
         return response.data.data;
     }

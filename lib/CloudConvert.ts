@@ -16,6 +16,7 @@ export default class CloudConvert {
 
     public readonly apiKey: string;
     public readonly useSandbox: boolean;
+    public readonly region: string | null;
 
     public axios!: AxiosInstance;
     public tasks!: TasksResource;
@@ -24,9 +25,10 @@ export default class CloudConvert {
     public webhooks!: WebhooksResource;
     public signedUrls!: SignedUrlResource;
 
-    constructor(apiKey: string, useSandbox = false) {
+    constructor(apiKey: string, useSandbox = false, region = null) {
         this.apiKey = apiKey;
         this.useSandbox = useSandbox;
+        this.region = region;
 
         this.createAxiosInstance();
         this.createResources();
@@ -36,7 +38,9 @@ export default class CloudConvert {
         this.axios = axios.create({
             baseURL: this.useSandbox
                 ? 'https://api.sandbox.cloudconvert.com/v2/'
-                : 'https://api.cloudconvert.com/v2/',
+                : `https://${
+                      this.region ? this.region + '.' : ''
+                  }api.cloudconvert.com/v2/`,
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
                 'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`

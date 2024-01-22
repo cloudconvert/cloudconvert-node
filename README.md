@@ -92,6 +92,9 @@ const inputFile = fs.createReadStream('./file.pdf');
 
 await cloudConvert.tasks.upload(uploadTask, inputFile, 'file.pdf');
 ```
+> **Note on custom streams**:
+The length of the stream needs to be known prior to uploading. The SDK automatically detects the file size of file-based read streams. If you are using a custom stream, you need to pass a `filesize` as fourth parameter to the `upload()` method. 
+
 
 ## Websocket Events
 
@@ -179,6 +182,15 @@ const cloudConvert = new CloudConvert('api_key', true);
 ```
 
 > Don't forget to generate MD5 Hashes for the files you will use for testing.
+
+## Setting a Region
+
+By default, the region in your [account settings](https://cloudconvert.com/dashboard/region) is used. Alternatively, you can set a fixed region:
+
+```js
+// Pass the region as third argument to the constructor
+const cloudConvert = new CloudConvert('api_key', false, 'us-east');
+```
 
 ## Contributing
 
