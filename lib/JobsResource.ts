@@ -36,51 +36,40 @@ export default class JobsResource {
         this.cloudConvert = cloudConvert;
     }
 
-    async get(id: string, query = null): Promise<Job> {
-        const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
-            params: query || {}
-        });
-        return response.data.data;
+    async get(id: string, query?: object): Promise<Job> {
+        return await this.cloudConvert.call('GET', `jobs/${id}`, query);
     }
 
     async wait(id: string): Promise<Job> {
-        const response = await this.cloudConvert.axios.get(`jobs/${id}`, {
-            baseURL: this.cloudConvert.useSandbox
-                ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
-                : `https://${
-                      this.cloudConvert.region
-                          ? this.cloudConvert.region + '.'
-                          : ''
-                  }sync.api.cloudconvert.com/v2/`
-        });
-        return response.data.data;
+        const baseURL = this.cloudConvert.useSandbox
+            ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
+            : `https://${
+                  this.cloudConvert.region ? this.cloudConvert.region + '.' : ''
+              }sync.api.cloudconvert.com/v2/`;
+        return await this.cloudConvert.callWithBase(
+            baseURL,
+            'GET',
+            `jobs/${id}`
+        );
     }
 
-    async all(
-        query: {
-            'filter[status]'?: JobStatus;
-            'filter[tag]'?: string;
-            include?: string;
-            per_page?: number;
-            page?: number;
-        } | null = null
-    ): Promise<Job[]> {
-        const response = await this.cloudConvert.axios.get('jobs', {
-            params: query || {}
-        });
-        return response.data.data;
+    async all(query?: {
+        'filter[status]'?: JobStatus;
+        'filter[tag]'?: string;
+        include?: string;
+        per_page?: number;
+        page?: number;
+    }): Promise<Job[]> {
+        return await this.cloudConvert.call('GET', 'jobs', query);
     }
 
     // See below for an explanation on how this type signature works
-    async create(data: JobTemplate | null = null): Promise<Job> {
-        const response = await this.cloudConvert.axios.post('jobs', data, {
-            maxBodyLength: Infinity
-        });
-        return response.data.data;
+    async create(data?: JobTemplate): Promise<Job> {
+        return await this.cloudConvert.call('POST', 'jobs', data);
     }
 
     async delete(id: string): Promise<void> {
-        await this.cloudConvert.axios.delete(`jobs/${id}`);
+        await this.cloudConvert.call('DELETE', `jobs/${id}`);
     }
 
     async subscribeEvent(

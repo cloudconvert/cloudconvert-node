@@ -92,9 +92,9 @@ const inputFile = fs.createReadStream('./file.pdf');
 
 await cloudConvert.tasks.upload(uploadTask, inputFile, 'file.pdf');
 ```
-> **Note on custom streams**:
-The length of the stream needs to be known prior to uploading. The SDK automatically detects the file size of file-based read streams. If you are using a custom stream, you need to pass a `filesize` as fourth parameter to the `upload()` method. 
 
+> **Note on custom streams**:
+> The length of the stream needs to be known prior to uploading. The SDK automatically detects the file size of file-based read streams. If you are using a custom stream, you need to pass a `filesize` as fourth parameter to the `upload()` method.
 
 ## Websocket Events
 

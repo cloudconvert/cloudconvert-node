@@ -1,14 +1,14 @@
-import axios, { type AxiosInstance } from 'axios';
 import io from 'socket.io-client';
+import FormData from 'form-data';
+import { version } from '../package.json';
 import JobsResource, { type JobEventData } from './JobsResource';
+import SignedUrlResource from './SignedUrlResource';
 import TasksResource, {
     type JobTaskEventData,
     type TaskEventData
 } from './TasksResource';
 import UsersResource from './UsersResource';
 import WebhooksResource from './WebhooksResource';
-import { version } from '../package.json';
-import SignedUrlResource from './SignedUrlResource';
 
 export default class CloudConvert {
     private socket: SocketIOClient.Socket | undefined;
@@ -18,7 +18,6 @@ export default class CloudConvert {
     public readonly useSandbox: boolean;
     public readonly region: string | null;
 
-    public axios!: AxiosInstance;
     public tasks!: TasksResource;
     public jobs!: JobsResource;
     public users!: UsersResource;
@@ -30,30 +29,47 @@ export default class CloudConvert {
         this.useSandbox = useSandbox;
         this.region = region;
 
-        this.createAxiosInstance();
-        this.createResources();
-    }
-
-    createAxiosInstance(): void {
-        this.axios = axios.create({
-            baseURL: this.useSandbox
-                ? 'https://api.sandbox.cloudconvert.com/v2/'
-                : `https://${
-                      this.region ? this.region + '.' : ''
-                  }api.cloudconvert.com/v2/`,
-            headers: {
-                Authorization: `Bearer ${this.apiKey}`,
-                'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`
-            }
-        });
-    }
-
-    createResources(): void {
         this.tasks = new TasksResource(this);
         this.jobs = new JobsResource(this);
         this.users = new UsersResource(this);
         this.webhooks = new WebhooksResource();
         this.signedUrls = new SignedUrlResource();
+    }
+
+    async call(
+        method: 'GET' | 'POST' | 'DELETE',
+        route: string,
+        parameters?: FormData | object
+    ) {
+        const baseURL = this.useSandbox
+            ? 'https://api.sandbox.cloudconvert.com/v2/'
+            : `https://${
+                  this.region ? this.region + '.' : ''
+              }api.cloudconvert.com/v2/`;
+        return await this.callWithBase(baseURL, method, route, parameters);
+    }
+
+    async callWithBase(
+        baseURL: string,
+        method: 'GET' | 'POST' | 'DELETE',
+        route: string,
+        parameters?: FormData | object
+    ) {
+        const res = await fetch(new URL(route, baseURL), {
+            method,
+            headers: {
+                Authorization: `Bearer ${this.apiKey}`,
+                'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
+                ...(parameters instanceof FormData
+                    ? parameters.getHeaders()
+                    : {})
+            },
+            body:
+                parameters instanceof FormData
+                    ? parameters
+                    : JSON.stringify(parameters)
+        });
+        return await res.json();
     }
 
     subscribe(
