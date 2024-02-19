@@ -18,8 +18,7 @@ export default class UsersResource {
     }
 
     async me(): Promise<User> {
-        const response = await this.cloudConvert.axios.get('users/me');
-        return response.data.data;
+        return await this.cloudConvert.call('GET', 'users/me');
     }
 
     async subscribeJobEvent(
