@@ -1,7 +1,5 @@
-import FormData, { type Stream } from 'form-data';
 import CloudConvert from './CloudConvert';
 import { type JobTask } from './JobsResource';
-import { ReadStream, statSync } from 'fs';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
@@ -589,9 +587,8 @@ export default class TasksResource {
 
     async upload(
         task: Task | JobTask,
-        stream: Stream,
-        filename: string | null = null,
-        size: number | null = null
+        stream: Blob,
+        filename?: string
     ): Promise<any> {
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');
@@ -602,22 +599,10 @@ export default class TasksResource {
         }
 
         const formData = new FormData();
-
         for (const parameter in task.result.form.parameters) {
             formData.append(parameter, task.result.form.parameters[parameter]);
         }
-
-        const fileOptions: { filename?: string; knownLength?: number } = {};
-
-        if (filename) {
-            fileOptions.filename = filename;
-        }
-        if (size) {
-            fileOptions.knownLength = size;
-        } else if (stream instanceof ReadStream) {
-            fileOptions.knownLength = statSync(stream.path).size;
-        }
-        formData.append('file', stream, fileOptions);
+        formData.append('file', stream, filename);
 
         return await this.cloudConvert.call(
             'POST',

@@ -1,5 +1,4 @@
 import io from 'socket.io-client';
-import FormData from 'form-data';
 import { version } from '../package.json';
 import JobsResource, { type JobEventData } from './JobsResource';
 import SignedUrlResource from './SignedUrlResource';
@@ -59,10 +58,7 @@ export default class CloudConvert {
             method,
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
-                'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
-                ...(parameters instanceof FormData
-                    ? parameters.getHeaders()
-                    : {})
+                'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`
             },
             body:
                 parameters instanceof FormData
