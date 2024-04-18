@@ -16,7 +16,7 @@
         "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
     },
     "dependencies": {
-        "axios": "^0.27.2",
+        "axios": "^0.28.1",
         "form-data": "^4.0.0",
         "socket.io-client": "^4.6.1"
     },
