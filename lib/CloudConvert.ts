@@ -11,13 +11,13 @@ import { version } from '../package.json';
 import SignedUrlResource from './SignedUrlResource';
 
 export default class CloudConvert {
-    private socket: SocketIOClient.Socket | undefined;
     private subscribedChannels: Map<string, boolean> | undefined;
 
     public readonly apiKey: string;
     public readonly useSandbox: boolean;
     public readonly region: string | null;
 
+    public socket: SocketIOClient.Socket | undefined;
     public axios!: AxiosInstance;
     public tasks!: TasksResource;
     public jobs!: JobsResource;
@@ -70,7 +70,10 @@ export default class CloudConvert {
                     ? 'https://socketio.sandbox.cloudconvert.com'
                     : 'https://socketio.cloudconvert.com',
                 {
-                    transports: ['websocket']
+                    transports: ['websocket'],
+                    reconnection: true,
+                    reconnectionDelay: 2 * 60 * 1000, // two minutes
+                    reconnectionDelayMax: 15 * 60 * 1000 // 15 minutes
                 }
             );
             this.subscribedChannels = new Map<string, boolean>();

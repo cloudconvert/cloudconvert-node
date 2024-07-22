@@ -123,6 +123,10 @@ When you don't want to receive any events any more you should close the socket:
 ```js
 cloudConvert.closeSocket();
 ```
+> **Note on websocket connection**:
+The Websocket connection has a [connection state recovery](https://socket.io/docs/v4/connection-state-recovery) configured. The adapter will try to reconnect in 2 minutes (at a maximum of 15 minutes) every time a connection is lost.
+You can also implement an error handler logic by doing `cloudConvert.socket.on('connect_error', ...)` (see how to [troubleshoot connection issues](https://socket.io/docs/v4/troubleshooting-connection-issues/)).
+
 
 ## Webhook Signing
 
