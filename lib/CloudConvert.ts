@@ -1,4 +1,4 @@
-import io from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 import { version } from '../package.json';
 import JobsResource, { type JobEventData } from './JobsResource';
 import SignedUrlResource from './SignedUrlResource';
@@ -10,7 +10,7 @@ import UsersResource from './UsersResource';
 import WebhooksResource from './WebhooksResource';
 
 export default class CloudConvert {
-    private socket: SocketIOClient.Socket | undefined;
+    private socket: Socket | undefined;
     private subscribedChannels: Map<string, boolean> | undefined;
 
     public readonly apiKey: string;
@@ -54,18 +54,36 @@ export default class CloudConvert {
         route: string,
         parameters?: FormData | object
     ) {
-        const res = await fetch(new URL(route, baseURL), {
+        const url = new URL(route, baseURL);
+        let body: RequestInit['body'] | undefined;
+        if (parameters instanceof FormData) {
+            body = parameters;
+        } else {
+            if (method === 'GET') {
+                url.search = new URLSearchParams(
+                    Object.entries(parameters ?? {})
+                ).toString();
+            } else {
+                body = JSON.stringify(parameters);
+            }
+        }
+        const res = await fetch(url, {
             method,
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
                 'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`
             },
-            body:
-                parameters instanceof FormData
-                    ? parameters
-                    : JSON.stringify(parameters)
+            body
         });
-        return await res.json();
+        if (
+            !res.ok ||
+            res.headers.get('Content-Type')?.toLowerCase() !==
+                'application/json'
+        ) {
+            return undefined;
+        }
+        const { data } = await res.json();
+        return data;
     }
 
     subscribe(
@@ -77,13 +95,11 @@ export default class CloudConvert {
             | ((event: JobTaskEventData) => void)
     ): void {
         if (!this.socket) {
-            this.socket = io.connect(
+            this.socket = io(
                 this.useSandbox
                     ? 'https://socketio.sandbox.cloudconvert.com'
                     : 'https://socketio.cloudconvert.com',
-                {
-                    transports: ['websocket']
-                }
+                { transports: ['websocket'] }
             );
             this.subscribedChannels = new Map<string, boolean>();
         }
@@ -91,11 +107,7 @@ export default class CloudConvert {
         if (!this.subscribedChannels?.get(channel)) {
             this.socket.emit('subscribe', {
                 channel,
-                auth: {
-                    headers: {
-                        Authorization: `Bearer ${this.apiKey}`
-                    }
-                }
+                auth: { headers: { Authorization: `Bearer ${this.apiKey}` } }
             });
             this.subscribedChannels?.set(channel, true);
         }
