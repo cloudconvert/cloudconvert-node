@@ -1,9 +1,10 @@
 import CloudConvert from '../../built/lib/CloudConvert.js';
 import { assert } from 'chai';
 import * as fs from 'fs';
+import { Readable } from 'node:stream';
+import { type ReadableStream } from 'node:stream/web';
 import * as os from 'os';
 import apiKey from './ApiKey.js';
-import axios from 'axios';
 
 describe('JobsResource', () => {
     let cloudConvert: CloudConvert;
@@ -48,11 +49,11 @@ describe('JobsResource', () => {
 
             const writer = fs.createWriteStream(tmpPath);
 
-            const response = await axios(file.url, { responseType: 'stream' });
+            const response = (await fetch(file.url!)).body as ReadableStream;
 
-            response.data.pipe(writer);
+            Readable.fromWeb(response).pipe(writer);
 
-            await new Promise((resolve, reject) => {
+            await new Promise<void>((resolve, reject) => {
                 writer.on('finish', resolve);
                 writer.on('error', reject);
             });
