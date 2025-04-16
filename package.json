@@ -16,7 +16,7 @@
         "url": "https://github.com/cloudconvert/cloudconvert-node/issues"
     },
     "engines": {
-        "node": ">=19.8.0"
+        "node": ">=20.11.19"
     },
     "dependencies": {
         "socket.io-client": "^4.7.4"
