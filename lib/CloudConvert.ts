@@ -1,4 +1,5 @@
 import { io, type Socket } from 'socket.io-client';
+import { Readable } from 'node:stream';
 import { version } from '../package.json';
 import JobsResource, { type JobEventData } from './JobsResource';
 import SignedUrlResource from './SignedUrlResource';
@@ -8,6 +9,85 @@ import TasksResource, {
 } from './TasksResource';
 import UsersResource from './UsersResource';
 import WebhooksResource from './WebhooksResource';
+
+export type UploadFileSource =
+    | Blob
+    | Uint8Array
+    | Iterable<Uint8Array>
+    | AsyncIterable<Uint8Array>
+    | NodeJS.ReadableStream;
+
+export class UploadFile {
+    private readonly attributes: Array<[key: string, value: unknown]> = [];
+    private readonly data: AsyncIterable<Uint8Array>;
+    constructor(
+        data: UploadFileSource,
+        private readonly filename?: string
+    ) {
+        this.data = UploadFile.unifySources(data);
+    }
+    add(key: string, value: unknown) {
+        this.attributes.push([key, value]);
+    }
+    async *stream() {
+        const enc = new TextEncoder();
+        const boundary = `----------${Array.from(Array(32))
+            .map(() => Math.random().toString(36)[2] || 0)
+            .join('')}`;
+        // Start multipart/form-data protocol
+        yield enc.encode(`--${boundary}\r\n`);
+        // Send all attributes
+        const separator = enc.encode(`\r\n--${boundary}\r\n`);
+        let first = true;
+        for (const [key, value] of this.attributes) {
+            if (value == null) continue;
+            if (!first) yield separator;
+            yield enc.encode(
+                `content-disposition:form-data;name="${key}"\r\n\r\n${value}`
+            );
+            first = false;
+        }
+        // Send file
+        if (!first) yield separator;
+        yield enc.encode(
+            `content-disposition:form-data;name="file";filename=${this.filename}\r\ncontent-type:application/octet-stream\r\n\r\n`
+        );
+        yield* this.data;
+        // End multipart/form-data protocol
+        yield enc.encode(`\r\n--${boundary}--\r\n`);
+    }
+
+    static async *unifySources(
+        data: UploadFileSource
+    ): AsyncIterable<Uint8Array> {
+        if (data instanceof Uint8Array) {
+            yield data;
+            return;
+        }
+
+        if (data instanceof Blob) {
+            yield data.bytes();
+            return;
+        }
+
+        if (Symbol.iterator in data) {
+            yield* data;
+            return;
+        }
+
+        if (Symbol.asyncIterator in data) {
+            const it = data[Symbol.asyncIterator]();
+            for await (const chunk of data) {
+                if (typeof chunk === 'string')
+                    throw new Error(
+                        'bad file data, received string but expected Uint8Array'
+                    );
+                yield chunk;
+            }
+            return;
+        }
+    }
+}
 
 export default class CloudConvert {
     private socket: Socket | undefined;
@@ -38,7 +118,7 @@ export default class CloudConvert {
     async call(
         method: 'GET' | 'POST' | 'DELETE',
         route: string,
-        parameters?: FormData | object
+        parameters?: UploadFile | object
     ) {
         const baseURL = this.useSandbox
             ? 'https://api.sandbox.cloudconvert.com/v2/'
@@ -52,28 +132,27 @@ export default class CloudConvert {
         baseURL: string,
         method: 'GET' | 'POST' | 'DELETE',
         route: string,
-        parameters?: FormData | object
+        parameters?: UploadFile | object
     ) {
         const url = new URL(route, baseURL);
-        let body: RequestInit['body'] | undefined;
-        if (parameters instanceof FormData) {
-            body = parameters;
-        } else {
-            if (method === 'GET') {
-                url.search = new URLSearchParams(
-                    Object.entries(parameters ?? {})
-                ).toString();
-            } else {
-                body = JSON.stringify(parameters);
-            }
+        const { contentType, search, body } = prepareParameters(
+            method,
+            parameters
+        );
+        if (search !== undefined) {
+            url.search = search;
         }
+        const headers = {
+            Authorization: `Bearer ${this.apiKey}`,
+            'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
+            ...(contentType ? { 'Content-Type': contentType } : {})
+        };
         const res = await fetch(url, {
             method,
-            headers: {
-                Authorization: `Bearer ${this.apiKey}`,
-                'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`
-            },
-            body
+            headers,
+            body,
+            // @ts-expect-error incorrect types in @types/node@20
+            duplex: 'half'
         });
         if (
             !res.ok ||
@@ -126,4 +205,39 @@ export default class CloudConvert {
     closeSocket(): void {
         this.socket?.close();
     }
+}
+
+function prepareParameters(
+    method: 'GET' | 'POST' | 'DELETE',
+    data?: UploadFile | object
+): {
+    contentType?: string;
+    body?: string | ReadableStream<Uint8Array>;
+    search?: string;
+} {
+    if (data === undefined) {
+        return {};
+    }
+
+    if (method === 'GET') {
+        // abort early if all data needs to go into the search params
+        const entries = Object.entries(data ?? {});
+        return { search: new URLSearchParams(entries).toString() };
+    }
+
+    if (data instanceof UploadFile) {
+        return {
+            contentType: 'multipart/form-data',
+            body: asyncIterableToReadableStream(data.stream())
+        };
+    }
+
+    return { contentType: 'application/json', body: JSON.stringify(data) };
+}
+
+function asyncIterableToReadableStream(
+    it: AsyncIterable<Uint8Array>
+): ReadableStream<Uint8Array> {
+    const r = Readable.from(it);
+    return Readable.toWeb(r) as ReadableStream<Uint8Array>;
 }

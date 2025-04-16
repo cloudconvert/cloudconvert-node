@@ -1,4 +1,7 @@
-import CloudConvert from './CloudConvert';
+import CloudConvert, {
+    UploadFile,
+    type UploadFileSource
+} from './CloudConvert';
 import { type JobTask } from './JobsResource';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
@@ -587,7 +590,7 @@ export default class TasksResource {
 
     async upload(
         task: Task | JobTask,
-        stream: Blob,
+        stream: UploadFileSource,
         filename?: string
     ): Promise<any> {
         if (task.operation !== 'import/upload') {
@@ -598,16 +601,15 @@ export default class TasksResource {
             throw new Error('The task is not ready for uploading');
         }
 
-        const formData = new FormData();
+        const uploadFile = new UploadFile(stream, filename);
         for (const parameter in task.result.form.parameters) {
-            formData.append(parameter, task.result.form.parameters[parameter]);
+            uploadFile.add(parameter, task.result.form.parameters[parameter]);
         }
-        formData.append('file', stream, filename);
 
         return await this.cloudConvert.call(
             'POST',
             task.result.form.url,
-            formData
+            uploadFile
         );
     }
 
