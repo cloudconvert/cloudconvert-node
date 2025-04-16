@@ -153,10 +153,14 @@ export default class CloudConvert {
             // @ts-expect-error incorrect types in @types/node@20
             duplex: 'half'
         });
+        if (!res.ok) {
+            // @ts-expect-error cause not present in types yet
+            throw new Error(res.statusText, { cause: res });
+        }
+
         if (
-            !res.ok ||
             res.headers.get('Content-Type')?.toLowerCase() !==
-                'application/json'
+            'application/json'
         ) {
             return undefined;
         }
