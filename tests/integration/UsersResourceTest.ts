@@ -3,13 +3,15 @@ import apiKey from './ApiKey.js';
 import { assert } from 'chai';
 
 describe('UsersResource', () => {
+    let cloudConvert: CloudConvert;
+
     beforeEach(() => {
-        this.cloudConvert = new CloudConvert(apiKey, true);
+        cloudConvert = new CloudConvert(apiKey, true);
     });
 
     describe('me()', () => {
         it('should fetch the current user', async () => {
-            const data = await this.cloudConvert.users.me();
+            const data = await cloudConvert.users.me();
 
             console.log(data);
 

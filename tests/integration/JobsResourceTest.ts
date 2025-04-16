@@ -6,17 +6,20 @@ import apiKey from './ApiKey.js';
 import axios from 'axios';
 
 describe('JobsResource', () => {
+    let cloudConvert: CloudConvert;
+    let tmpPath: string;
+
     beforeEach(() => {
-        this.cloudConvert = new CloudConvert(apiKey, true);
+        cloudConvert = new CloudConvert(apiKey, true);
     });
 
     describe('create()', () => {
         beforeEach(() => {
-            this.tmpPath = os.tmpdir() + '/tmp.png';
+            tmpPath = os.tmpdir() + '/tmp.png';
         });
 
         it('test upload and download files', async () => {
-            let job = await this.cloudConvert.jobs.create({
+            let job = await cloudConvert.jobs.create({
                 tag: 'integration-test-upload-download',
                 tasks: {
                     'import-it': { operation: 'import/upload' },
@@ -32,18 +35,18 @@ describe('JobsResource', () => {
                 __dirname + '/../integration/files/input.png'
             );
 
-            await this.cloudConvert.tasks.upload(uploadTask, stream);
+            await cloudConvert.tasks.upload(uploadTask, stream);
 
-            job = await this.cloudConvert.jobs.wait(job.id);
+            job = await cloudConvert.jobs.wait(job.id);
 
             assert.equal(job.status, 'finished');
 
             // download export file
-            const file = this.cloudConvert.jobs.getExportUrls(job)[0];
+            const file = cloudConvert.jobs.getExportUrls(job)[0];
 
             assert.equal(file.filename, 'input.png');
 
-            const writer = fs.createWriteStream(this.tmpPath);
+            const writer = fs.createWriteStream(tmpPath);
 
             const response = await axios(file.url, { responseType: 'stream' });
 
@@ -55,21 +58,21 @@ describe('JobsResource', () => {
             });
 
             // check file size
-            const stat = fs.statSync(this.tmpPath);
+            const stat = fs.statSync(tmpPath);
 
             assert.equal(stat.size, 46937);
 
-            await this.cloudConvert.jobs.delete(job.id);
+            await cloudConvert.jobs.delete(job.id);
         }).timeout(30000);
 
         afterEach(() => {
-            fs.unlinkSync(this.tmpPath);
+            fs.unlinkSync(tmpPath);
         });
     });
 
     describe('subscribeEvent()', () => {
         it('test listening for finished event', async () => {
-            let job = await this.cloudConvert.jobs.create({
+            const job = await cloudConvert.jobs.create({
                 tag: 'integration-test-socket',
                 tasks: {
                     'import-it': { operation: 'import/upload' },
@@ -85,23 +88,19 @@ describe('JobsResource', () => {
                 __dirname + '/../integration/files/input.png'
             );
 
-            this.cloudConvert.tasks.upload(uploadTask, stream);
+            cloudConvert.tasks.upload(uploadTask, stream);
 
             const event = await new Promise(resolve => {
-                this.cloudConvert.jobs.subscribeEvent(
-                    job.id,
-                    'finished',
-                    resolve
-                );
+                cloudConvert.jobs.subscribeEvent(job.id, 'finished', resolve);
             });
 
             assert.equal(event.job.status, 'finished');
 
-            await this.cloudConvert.jobs.delete(job.id);
+            await cloudConvert.jobs.delete(job.id);
         }).timeout(30000);
 
         afterEach(() => {
-            this.cloudConvert.closeSocket();
+            cloudConvert.closeSocket();
         });
     });
 });

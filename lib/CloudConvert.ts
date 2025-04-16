@@ -76,7 +76,6 @@ export class UploadFile {
         }
 
         if (Symbol.asyncIterator in data) {
-            const it = data[Symbol.asyncIterator]();
             for await (const chunk of data) {
                 if (typeof chunk === 'string')
                     throw new Error(
