@@ -239,5 +239,5 @@ and even auto-fix as many things as possible by running
 
 ## Resources
 
--   [API v2 Documentation](https://cloudconvert.com/api/v2)
--   [CloudConvert Blog](https://cloudconvert.com/blog)
+- [API v2 Documentation](https://cloudconvert.com/api/v2)
+- [CloudConvert Blog](https://cloudconvert.com/blog)
