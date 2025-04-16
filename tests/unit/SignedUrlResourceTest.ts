@@ -2,8 +2,10 @@ import CloudConvert from '../../built/lib/CloudConvert.js';
 import { assert } from 'chai';
 
 describe('SignedUrlResource', () => {
+    let cloudConvert: CloudConvert;
+
     beforeEach(() => {
-        this.cloudConvert = new CloudConvert('test');
+        cloudConvert = new CloudConvert('test');
     });
 
     describe('create()', () => {
@@ -25,9 +27,9 @@ describe('SignedUrlResource', () => {
                         inline: true
                     }
                 }
-            };
+            } as const;
 
-            const url = this.cloudConvert.signedUrls.sign(
+            const url = cloudConvert.signedUrls.sign(
                 base,
                 signingSecret,
                 job,

@@ -3,8 +3,10 @@ import { assert } from 'chai';
 import nock from 'nock';
 
 describe('UsersResource', () => {
+    let cloudConvert: CloudConvert;
+
     beforeEach(() => {
-        this.cloudConvert = new CloudConvert('test');
+        cloudConvert = new CloudConvert('test');
     });
 
     describe('me()', () => {
@@ -15,7 +17,7 @@ describe('UsersResource', () => {
                     'Content-Type': 'application/json'
                 });
 
-            const data = await this.cloudConvert.users.me();
+            const data = await cloudConvert.users.me();
 
             assert.isObject(data);
             assert.equal(data.id, 1);

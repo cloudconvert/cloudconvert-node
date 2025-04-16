@@ -1,5 +1,5 @@
 import CloudConvert from '../../built/lib/CloudConvert.js';
-import apiKey from './ApiKey';
+import apiKey from './ApiKey.js';
 import { assert } from 'chai';
 
 describe('UsersResource', () => {

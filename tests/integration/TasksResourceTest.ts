@@ -1,7 +1,7 @@
 import CloudConvert from '../../built/lib/CloudConvert.js';
 import { assert } from 'chai';
 import * as fs from 'fs';
-import apiKey from './ApiKey';
+import apiKey from './ApiKey.js';
 
 describe('TasksResource', () => {
     beforeEach(() => {

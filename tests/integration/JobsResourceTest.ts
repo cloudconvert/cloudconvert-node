@@ -2,7 +2,7 @@ import CloudConvert from '../../built/lib/CloudConvert.js';
 import { assert } from 'chai';
 import * as fs from 'fs';
 import * as os from 'os';
-import apiKey from './ApiKey';
+import apiKey from './ApiKey.js';
 import axios from 'axios';
 
 describe('JobsResource', () => {
@@ -19,13 +19,8 @@ describe('JobsResource', () => {
             let job = await this.cloudConvert.jobs.create({
                 tag: 'integration-test-upload-download',
                 tasks: {
-                    'import-it': {
-                        operation: 'import/upload'
-                    },
-                    'export-it': {
-                        input: 'import-it',
-                        operation: 'export/url'
-                    }
+                    'import-it': { operation: 'import/upload' },
+                    'export-it': { input: 'import-it', operation: 'export/url' }
                 }
             });
 
@@ -50,9 +45,7 @@ describe('JobsResource', () => {
 
             const writer = fs.createWriteStream(this.tmpPath);
 
-            const response = await axios(file.url, {
-                responseType: 'stream'
-            });
+            const response = await axios(file.url, { responseType: 'stream' });
 
             response.data.pipe(writer);
 
@@ -79,13 +72,8 @@ describe('JobsResource', () => {
             let job = await this.cloudConvert.jobs.create({
                 tag: 'integration-test-socket',
                 tasks: {
-                    'import-it': {
-                        operation: 'import/upload'
-                    },
-                    'export-it': {
-                        input: 'import-it',
-                        operation: 'export/url'
-                    }
+                    'import-it': { operation: 'import/upload' },
+                    'export-it': { input: 'import-it', operation: 'export/url' }
                 }
             });
 
