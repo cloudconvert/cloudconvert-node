@@ -16,18 +16,22 @@ describe('TasksResource', () => {
                 name: 'upload-test'
             });
 
+            console.log('task', task);
             const stream = fs.createReadStream(
                 __dirname + '/../integration/files/input.png'
             );
 
-            await cloudConvert.tasks.upload(task, stream);
+            const res = await cloudConvert.tasks.upload(task, stream);
+            console.log('upload', res);
 
             task = await cloudConvert.tasks.wait(task.id);
+            console.log('task', task);
 
             assert.equal(task.status, 'finished');
             assert.equal(task.result.files[0].filename, 'input.png');
 
-            await cloudConvert.tasks.delete(task.id);
+            const del = await cloudConvert.tasks.delete(task.id);
+            console.log(del);
         }).timeout(30000);
     });
 });

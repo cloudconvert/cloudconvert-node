@@ -154,6 +154,8 @@ export default class CloudConvert {
             duplex: 'half'
         });
         if (!res.ok) {
+            console.error('SND:', url, method, headers);
+            console.error('RCV:', res, await res.text());
             // @ts-expect-error cause not present in types yet
             throw new Error(res.statusText, { cause: res });
         }
