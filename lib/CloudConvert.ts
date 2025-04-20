@@ -1,5 +1,6 @@
-import { io, type Socket } from 'socket.io-client';
+import path from 'node:path';
 import { Readable } from 'node:stream';
+import { io, type Socket } from 'socket.io-client';
 import { version } from '../package.json';
 import JobsResource, { type JobEventData } from './JobsResource';
 import SignedUrlResource from './SignedUrlResource';
@@ -17,23 +18,26 @@ export type UploadFileSource =
     | AsyncIterable<Uint8Array>
     | NodeJS.ReadableStream;
 
+function guessFilename(source: UploadFileSource): string | undefined {
+    return 'path' in source && typeof source.path === 'string'
+        ? path.basename(source.path)
+        : undefined;
+}
+
 export class UploadFile {
     private readonly attributes: Array<[key: string, value: unknown]> = [];
     private readonly data: AsyncIterable<Uint8Array>;
     constructor(
         data: UploadFileSource,
-        private readonly filename?: string
+        private readonly filename = guessFilename(data)
     ) {
         this.data = UploadFile.unifySources(data);
     }
     add(key: string, value: unknown) {
         this.attributes.push([key, value]);
     }
-    async *stream() {
+    async *stream(boundary: string) {
         const enc = new TextEncoder();
-        const boundary = `----------${Array.from(Array(32))
-            .map(() => Math.random().toString(36)[2] || 0)
-            .join('')}`;
         // Start multipart/form-data protocol
         yield enc.encode(`--${boundary}\r\n`);
         // Send all attributes
@@ -117,22 +121,32 @@ export default class CloudConvert {
     async call(
         method: 'GET' | 'POST' | 'DELETE',
         route: string,
-        parameters?: UploadFile | object
+        parameters?: UploadFile | object,
+        options?: { presigned?: boolean; flat?: boolean }
     ) {
         const baseURL = this.useSandbox
             ? 'https://api.sandbox.cloudconvert.com/v2/'
             : `https://${
                   this.region ? this.region + '.' : ''
               }api.cloudconvert.com/v2/`;
-        return await this.callWithBase(baseURL, method, route, parameters);
+        return await this.callWithBase(
+            baseURL,
+            method,
+            route,
+            parameters,
+            options
+        );
     }
 
     async callWithBase(
         baseURL: string,
         method: 'GET' | 'POST' | 'DELETE',
         route: string,
-        parameters?: UploadFile | object
+        parameters?: UploadFile | object,
+        options?: { presigned?: boolean; flat?: boolean }
     ) {
+        const presigned = options?.presigned ?? false;
+        const flat = options?.flat ?? false;
         const url = new URL(route, baseURL);
         const { contentType, search, body } = prepareParameters(
             method,
@@ -142,8 +156,8 @@ export default class CloudConvert {
             url.search = search;
         }
         const headers = {
-            Authorization: `Bearer ${this.apiKey}`,
             'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
+            ...(!presigned ? { Authorization: `Bearer ${this.apiKey}` } : {}),
             ...(contentType ? { 'Content-Type': contentType } : {})
         };
         const res = await fetch(url, {
@@ -154,20 +168,20 @@ export default class CloudConvert {
             duplex: 'half'
         });
         if (!res.ok) {
-            console.error('SND:', url, method, headers);
-            console.error('RCV:', res, await res.text());
             // @ts-expect-error cause not present in types yet
             throw new Error(res.statusText, { cause: res });
         }
 
         if (
-            res.headers.get('Content-Type')?.toLowerCase() !==
-            'application/json'
+            !res.headers
+                .get('content-type')
+                ?.toLowerCase()
+                .includes('application/json')
         ) {
             return undefined;
         }
-        const { data } = await res.json();
-        return data;
+        const json = await res.json();
+        return flat ? json : json.data;
     }
 
     subscribe(
@@ -231,9 +245,12 @@ function prepareParameters(
     }
 
     if (data instanceof UploadFile) {
+        const boundary = `----------${Array.from(Array(32))
+            .map(() => Math.random().toString(36)[2] || 0)
+            .join('')}`;
         return {
-            contentType: 'multipart/form-data',
-            body: asyncIterableToReadableStream(data.stream())
+            contentType: `multipart/form-data; boundary=${boundary}`,
+            body: asyncIterableToReadableStream(data.stream(boundary))
         };
     }
 

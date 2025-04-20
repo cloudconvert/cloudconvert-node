@@ -609,7 +609,8 @@ export default class TasksResource {
         return await this.cloudConvert.call(
             'POST',
             task.result.form.url,
-            uploadFile
+            uploadFile,
+            { presigned: true, flat: true }
         );
     }
 
