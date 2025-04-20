@@ -76,7 +76,7 @@ export default class JobsResource {
         id: string,
         event: string,
         callback: (event: JobEventData) => void
-    ): Promise<void> {
+    ) {
         this.cloudConvert.subscribe(
             `private-job.${id}`,
             `job.${event}`,
@@ -84,11 +84,11 @@ export default class JobsResource {
         );
     }
 
-    async subscribeTaskEvent(
+    subscribeTaskEvent(
         id: string,
         event: string,
         callback: (event: TaskEventData) => void
-    ): Promise<void> {
+    ) {
         this.cloudConvert.subscribe(
             `private-job.${id}.tasks`,
             `task.${event}`,
