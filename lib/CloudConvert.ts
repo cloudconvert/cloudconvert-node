@@ -1,4 +1,4 @@
-import path from 'node:path';
+import { basename } from 'node:path';
 import { Readable } from 'node:stream';
 import { io, type Socket } from 'socket.io-client';
 import { version } from '../package.json';
@@ -20,7 +20,7 @@ export type UploadFileSource =
 
 function guessFilename(source: UploadFileSource): string | undefined {
     return 'path' in source && typeof source.path === 'string'
-        ? path.basename(source.path)
+        ? basename(source.path)
         : undefined;
 }
 
