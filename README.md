@@ -86,7 +86,7 @@ const job = await cloudConvert.jobs.create({
     }
 });
 
-const uploadTask = job.tasks.filter(task => task.name === 'upload-my-file')[0];
+const uploadTask = job.tasks.find(task => task.name === 'upload-my-file');
 
 const inputFile = fs.createReadStream('./file.pdf');
 
