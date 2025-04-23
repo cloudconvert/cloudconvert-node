@@ -89,7 +89,10 @@ describe('JobsResource', () => {
                 __dirname + '/../integration/files/input.png'
             );
 
-            cloudConvert.tasks.upload(uploadTask, stream);
+            setTimeout(() => {
+                // for testing, we need to slow down the upload. otherwise we might miss the event because the job finishes too fast
+                cloudConvert.tasks.upload(uploadTask, stream);
+            }, 1000);
 
             const event = await new Promise(resolve => {
                 cloudConvert.jobs.subscribeEvent(job.id, 'finished', resolve);
