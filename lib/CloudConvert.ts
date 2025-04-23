@@ -1,3 +1,4 @@
+import { statSync } from 'node:fs';
 import { basename } from 'node:path';
 import { Readable } from 'node:stream';
 import { io, type Socket } from 'socket.io-client';
@@ -18,20 +19,78 @@ export type UploadFileSource =
     | AsyncIterable<Uint8Array>
     | NodeJS.ReadableStream;
 
-function guessFilename(source: UploadFileSource): string | undefined {
-    return 'path' in source && typeof source.path === 'string'
-        ? basename(source.path)
-        : undefined;
+async function* unifySources(
+    data: UploadFileSource
+): AsyncIterable<Uint8Array> {
+    if (data instanceof Uint8Array) {
+        yield data;
+        return;
+    }
+
+    if (data instanceof Blob) {
+        yield data.bytes();
+        return;
+    }
+
+    if (Symbol.iterator in data) {
+        yield* data;
+        return;
+    }
+
+    if (Symbol.asyncIterator in data) {
+        for await (const chunk of data) {
+            if (typeof chunk === 'string')
+                throw new Error(
+                    'bad file data, received string but expected Uint8Array'
+                );
+            yield chunk;
+        }
+        return;
+    }
+}
+
+function guessNameAndSize(
+    source: UploadFileSource,
+    fileName?: string,
+    fileSize?: number
+): { name: string; size: number } {
+    const path =
+        'path' in source && typeof source.path === 'string'
+            ? source.path
+            : undefined;
+    const name =
+        fileName ?? (path !== undefined ? basename(path) : undefined) ?? 'file';
+    const size =
+        fileSize ??
+        (source instanceof Uint8Array ? source.byteLength : undefined) ??
+        (source instanceof Blob ? source.size : undefined) ??
+        (path !== undefined
+            ? statSync(path, { throwIfNoEntry: false })?.size
+            : undefined) ??
+        (fileName !== undefined
+            ? statSync(fileName, { throwIfNoEntry: false })?.size
+            : undefined);
+    if (size === undefined) {
+        throw new Error(
+            'Could not determine the number of bytes, specify it explicitly when calling `upload`'
+        );
+    }
+    return { name, size };
 }
 
 export class UploadFile {
     private readonly attributes: Array<[key: string, value: unknown]> = [];
     private readonly data: AsyncIterable<Uint8Array>;
-    constructor(
-        data: UploadFileSource,
-        private readonly filename = guessFilename(data)
-    ) {
-        this.data = UploadFile.unifySources(data);
+    private readonly filename?: string;
+    private readonly fileSize: number;
+    constructor(data: UploadFileSource, filename?: string, fileSize?: number) {
+        this.data = unifySources(data);
+        const { name, size } = guessNameAndSize(data, filename, fileSize);
+        this.filename = name;
+        this.fileSize = size;
+    }
+    byteCount() {
+        return this.fileSize;
     }
     add(key: string, value: unknown) {
         this.attributes.push([key, value]);
@@ -59,36 +118,6 @@ export class UploadFile {
         yield* this.data;
         // End multipart/form-data protocol
         yield enc.encode(`\r\n--${boundary}--\r\n`);
-    }
-
-    static async *unifySources(
-        data: UploadFileSource
-    ): AsyncIterable<Uint8Array> {
-        if (data instanceof Uint8Array) {
-            yield data;
-            return;
-        }
-
-        if (data instanceof Blob) {
-            yield data.bytes();
-            return;
-        }
-
-        if (Symbol.iterator in data) {
-            yield* data;
-            return;
-        }
-
-        if (Symbol.asyncIterator in data) {
-            for await (const chunk of data) {
-                if (typeof chunk === 'string')
-                    throw new Error(
-                        'bad file data, received string but expected Uint8Array'
-                    );
-                yield chunk;
-            }
-            return;
-        }
     }
 }
 
@@ -148,7 +177,7 @@ export default class CloudConvert {
         const presigned = options?.presigned ?? false;
         const flat = options?.flat ?? false;
         const url = new URL(route, baseURL);
-        const { contentType, search, body } = prepareParameters(
+        const { contentLength, contentType, search, body } = prepareParameters(
             method,
             parameters
         );
@@ -158,6 +187,7 @@ export default class CloudConvert {
         const headers = {
             'User-Agent': `cloudconvert-node/v${version} (https://github.com/cloudconvert/cloudconvert-node)`,
             ...(!presigned ? { Authorization: `Bearer ${this.apiKey}` } : {}),
+            ...(contentLength ? { 'Content-Length': contentLength } : {}),
             ...(contentType ? { 'Content-Type': contentType } : {})
         };
         const res = await fetch(url, {
@@ -230,6 +260,7 @@ function prepareParameters(
     method: 'GET' | 'POST' | 'DELETE',
     data?: UploadFile | object
 ): {
+    contentLength?: string;
     contentType?: string;
     body?: string | ReadableStream<Uint8Array>;
     search?: string;
@@ -249,6 +280,7 @@ function prepareParameters(
             .map(() => Math.random().toString(36)[2] || 0)
             .join('')}`;
         return {
+            contentLength: data.byteCount().toString(),
             contentType: `multipart/form-data; boundary=${boundary}`,
             body: asyncIterableToReadableStream(data.stream(boundary))
         };

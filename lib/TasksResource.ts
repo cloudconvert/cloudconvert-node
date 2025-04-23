@@ -591,7 +591,8 @@ export default class TasksResource {
     async upload(
         task: Task | JobTask,
         stream: UploadFileSource,
-        filename?: string
+        filename?: string,
+        fileSize?: number
     ): Promise<any> {
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');
@@ -601,7 +602,7 @@ export default class TasksResource {
             throw new Error('The task is not ready for uploading');
         }
 
-        const uploadFile = new UploadFile(stream, filename);
+        const uploadFile = new UploadFile(stream, filename, fileSize);
         for (const parameter in task.result.form.parameters) {
             uploadFile.add(parameter, task.result.form.parameters[parameter]);
         }
