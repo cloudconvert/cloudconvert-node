@@ -1,0 +1,6 @@
+{
+    "require": "tsx",
+    "spec": [
+        "tests/**/*.ts"
+    ]
+}

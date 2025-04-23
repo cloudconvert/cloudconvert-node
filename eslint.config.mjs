@@ -24,7 +24,8 @@ export default defineConfig([
         'tests/unit/requests/',
         'tests/unit/responses/',
         '.vscode/',
-        'tsconfig.json'
+        'tsconfig.json',
+        '.mocharc.json'
     ]),
     {
         extends: compat.extends(
