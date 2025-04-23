@@ -1,6 +1,6 @@
 # cloudconvert-node
 
-This is the official Node.js SDK v2 for the [CloudConvert](https://cloudconvert.com/api/v2) **API v2**.
+This is the official Node.js SDK for the [CloudConvert](https://cloudconvert.com/api/v2) API v2.
 
 [![Node.js Run Tests](https://github.com/cloudconvert/cloudconvert-node/actions/workflows/run-tests.yml/badge.svg)](https://github.com/cloudconvert/cloudconvert-node/actions/workflows/run-tests.yml)
 [![npm](https://img.shields.io/npm/v/cloudconvert.svg)](https://www.npmjs.com/package/cloudconvert)
@@ -92,6 +92,9 @@ const inputFile = fs.createReadStream('./file.pdf');
 
 await cloudConvert.tasks.upload(uploadTask, inputFile, 'file.pdf');
 ```
+
+> **Note on custom streams**:
+The length of the stream needs to be known prior to uploading. The SDK tries to automatically detect the file size of file-based read streams. If you are using a custom stream, you might need to pass a `fileSize` as fourth parameter to the `upload()` method. 
 
 ## Websocket Events
 
