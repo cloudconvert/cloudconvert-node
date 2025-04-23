@@ -89,35 +89,53 @@ export class UploadFile {
         this.filename = name;
         this.fileSize = size;
     }
-    byteCount() {
-        return this.fileSize;
-    }
     add(key: string, value: unknown) {
         this.attributes.push([key, value]);
     }
-    async *stream(boundary: string) {
+    toMultiPart(boundary: string): {
+        size: number;
+        stream: AsyncIterable<Uint8Array>;
+    } {
         const enc = new TextEncoder();
+        const prefix: Uint8Array[] = [];
+        const suffix: Uint8Array[] = [];
+
         // Start multipart/form-data protocol
-        yield enc.encode(`--${boundary}\r\n`);
+        prefix.push(enc.encode(`--${boundary}\r\n`));
         // Send all attributes
         const separator = enc.encode(`\r\n--${boundary}\r\n`);
         let first = true;
         for (const [key, value] of this.attributes) {
             if (value == null) continue;
-            if (!first) yield separator;
-            yield enc.encode(
-                `content-disposition:form-data;name="${key}"\r\n\r\n${value}`
+            if (!first) prefix.push(separator);
+            prefix.push(
+                enc.encode(
+                    `content-disposition:form-data;name="${key}"\r\n\r\n${value}`
+                )
             );
             first = false;
         }
         // Send file
-        if (!first) yield separator;
-        yield enc.encode(
-            `content-disposition:form-data;name="file";filename=${this.filename}\r\ncontent-type:application/octet-stream\r\n\r\n`
+        if (!first) prefix.push(separator);
+        prefix.push(
+            enc.encode(
+                `content-disposition:form-data;name="file";filename=${this.filename}\r\ncontent-type:application/octet-stream\r\n\r\n`
+            )
         );
-        yield* this.data;
+        const data = this.data;
         // End multipart/form-data protocol
-        yield enc.encode(`\r\n--${boundary}--\r\n`);
+        suffix.push(enc.encode(`\r\n--${boundary}--\r\n`));
+
+        const size =
+            prefix.reduce((sum, arr) => sum + arr.byteLength, 0) +
+            this.fileSize +
+            suffix.reduce((sum, arr) => sum + arr.byteLength, 0);
+        async function* concat() {
+            yield* prefix;
+            yield* data;
+            yield* suffix;
+        }
+        return { size, stream: concat() };
     }
 }
 
@@ -279,10 +297,11 @@ function prepareParameters(
         const boundary = `----------${Array.from(Array(32))
             .map(() => Math.random().toString(36)[2] || 0)
             .join('')}`;
+        const { size, stream } = data.toMultiPart(boundary);
         return {
-            contentLength: data.byteCount().toString(),
+            contentLength: size.toString(),
             contentType: `multipart/form-data; boundary=${boundary}`,
-            body: asyncIterableToReadableStream(data.stream(boundary))
+            body: asyncIterableToReadableStream(stream)
         };
     }
 
