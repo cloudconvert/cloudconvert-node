@@ -1,8 +1,8 @@
-import FormData, { type Stream } from 'form-data';
-import CloudConvert from './CloudConvert';
+import CloudConvert, {
+    UploadFile,
+    type UploadFileSource
+} from './CloudConvert';
 import { type JobTask } from './JobsResource';
-import axios from 'axios';
-import { ReadStream, statSync } from 'fs';
 
 export type TaskEvent = 'created' | 'updated' | 'finished' | 'failed';
 export type TaskStatus = 'waiting' | 'processing' | 'finished' | 'error';
@@ -546,71 +546,53 @@ export default class TasksResource {
         this.cloudConvert = cloudConvert;
     }
 
-    async get(
-        id: string,
-        query: { include: string } | null = null
-    ): Promise<Task> {
-        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
-            params: query || {}
-        });
-        return response.data.data;
+    async get(id: string, query?: { include?: string }): Promise<Task> {
+        return await this.cloudConvert.call('GET', `tasks/${id}`, query);
     }
 
     async wait(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.get(`tasks/${id}`, {
-            baseURL: this.cloudConvert.useSandbox
-                ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
-                : `https://${
-                      this.cloudConvert.region
-                          ? this.cloudConvert.region + '.'
-                          : ''
-                  }sync.api.cloudconvert.com/v2/`
-        });
-        return response.data.data;
+        const baseURL = this.cloudConvert.useSandbox
+            ? 'https://sync.api.sandbox.cloudconvert.com/v2/'
+            : `https://${
+                  this.cloudConvert.region ? this.cloudConvert.region + '.' : ''
+              }sync.api.cloudconvert.com/v2/`;
+        return await this.cloudConvert.callWithBase(
+            baseURL,
+            'GET',
+            `tasks/${id}`
+        );
     }
 
     async cancel(id: string): Promise<Task> {
-        const response = await this.cloudConvert.axios.post(
-            `tasks/${id}/cancel`
-        );
-        return response.data.data;
+        return await this.cloudConvert.call('POST', `tasks/${id}/cancel`);
     }
 
-    async all(
-        query: {
-            'filter[job_id]'?: string;
-            'filter[status]'?: TaskStatus;
-            'filter[operation]'?: Operation['operation'];
-            per_page?: number;
-            page?: number;
-        } | null = null
-    ): Promise<Task[]> {
-        const response = await this.cloudConvert.axios.get('tasks', {
-            params: query || {}
-        });
-        return response.data.data;
+    async all(query?: {
+        'filter[job_id]'?: string;
+        'filter[status]'?: TaskStatus;
+        'filter[operation]'?: Operation['operation'];
+        per_page?: number;
+        page?: number;
+    }): Promise<Task[]> {
+        return await this.cloudConvert.call('GET', 'tasks', query);
     }
 
     async create<O extends Operation['operation']>(
         operation: O,
-        data: Extract<Operation, { operation: O }>['data'] | null = null
+        data?: Extract<Operation, { operation: O }>['data']
     ): Promise<Task> {
-        const response = await this.cloudConvert.axios.post<any>(
-            operation,
-            data
-        );
-        return response.data.data;
+        return await this.cloudConvert.call('POST', operation, data);
     }
 
     async delete(id: string): Promise<void> {
-        await this.cloudConvert.axios.delete(`tasks/${id}`);
+        await this.cloudConvert.call('DELETE', `tasks/${id}`);
     }
 
     async upload(
         task: Task | JobTask,
-        stream: Stream,
-        filename: string | null = null,
-        size: number | null = null
+        stream: UploadFileSource,
+        filename?: string,
+        fileSize?: number
     ): Promise<any> {
         if (task.operation !== 'import/upload') {
             throw new Error('The task operation is not import/upload');
@@ -620,34 +602,17 @@ export default class TasksResource {
             throw new Error('The task is not ready for uploading');
         }
 
-        const formData = new FormData();
-
+        const uploadFile = new UploadFile(stream, filename, fileSize);
         for (const parameter in task.result.form.parameters) {
-            formData.append(parameter, task.result.form.parameters[parameter]);
+            uploadFile.add(parameter, task.result.form.parameters[parameter]);
         }
 
-        const fileOptions: { filename?: string; knownLength?: number } = {};
-
-        if (filename) {
-            fileOptions.filename = filename;
-        }
-        if (size) {
-            fileOptions.knownLength = size;
-        } else if (stream instanceof ReadStream) {
-            fileOptions.knownLength = statSync(stream.path).size;
-        }
-        formData.append('file', stream, fileOptions);
-
-        return await axios.post(task.result.form.url, formData, {
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity,
-            headers: {
-                ...(formData.hasKnownLength()
-                    ? { 'Content-Length': formData.getLengthSync() }
-                    : {}),
-                ...formData.getHeaders()
-            }
-        });
+        return await this.cloudConvert.call(
+            'POST',
+            task.result.form.url,
+            uploadFile,
+            { presigned: true, flat: true }
+        );
     }
 
     async subscribeEvent(
