@@ -66,9 +66,6 @@ function guessNameAndSize(
         (source instanceof Blob ? source.size : undefined) ??
         (path !== undefined
             ? statSync(path, { throwIfNoEntry: false })?.size
-            : undefined) ??
-        (fileName !== undefined
-            ? statSync(fileName, { throwIfNoEntry: false })?.size
             : undefined);
     if (size === undefined) {
         throw new Error(
