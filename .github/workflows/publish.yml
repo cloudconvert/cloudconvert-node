@@ -1,0 +1,77 @@
+# Publishes the package to npm with a provenance attestation on every version
+# tag push, then creates a GitHub release for the tag.
+#
+# npm authenticates this workflow through Trusted Publishing (OIDC), configured
+# on npmjs.com for this repository and the workflow file name publish.yml.
+#
+# To release, bump the version, commit, tag and push the tag:
+#
+#   npm version patch --no-git-tag-version
+#   git commit -am "Bump version"
+#   git tag 1.2.3
+#   git push origin master 1.2.3
+
+name: Publish
+
+on:
+    push:
+        tags:
+            - '*.*.*'
+
+jobs:
+    publish:
+        name: Publish to npm
+        runs-on: ubuntu-latest
+
+        permissions:
+            # Required to mint an OIDC token for Trusted Publishing and provenance.
+            id-token: write
+            contents: read
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  # Trusted Publishing needs npm 11.5.1 or later.
+                  node-version: 'lts/*'
+
+            - name: Check tag matches package version
+              run: |
+                  version=$(node -p "require('./package.json').version")
+                  if [ "$version" != "$GITHUB_REF_NAME" ]; then
+                      echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+                      exit 1
+                  fi
+
+            # Also builds the package through the prepare script.
+            - run: npm install
+            - run: npm run lint
+            - run: npm test
+
+            - name: Publish
+              # Tags with a pre-release suffix (e.g. 3.1.0-rc.1) are published under the "next" dist-tag.
+              run: |
+                  flags=""
+                  case "$GITHUB_REF_NAME" in *-*) flags="--tag next" ;; esac
+                  npm publish --provenance $flags
+
+    github-release:
+        name: Create GitHub release
+        # Only runs once the package is on npm.
+        needs: publish
+        runs-on: ubuntu-latest
+
+        permissions:
+            # Required to create the release. Kept out of the publish job.
+            contents: write
+
+        steps:
+            - name: Create release
+              run: |
+                  flags=""
+                  case "$GITHUB_REF_NAME" in *-*) flags="--prerelease" ;; esac
+                  gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes $flags
+              env:
+                  GH_TOKEN: ${{ github.token }}
